@@ -2,9 +2,11 @@
 using ManageMoneyServer.Models;
 using ManageMoneyServer.Models.ViewModels;
 using ManageMoneyServer.Results;
+using ManageMoneyServer.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Localization;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
@@ -24,14 +26,20 @@ namespace ManageMoneyServer.Controllers
         private UserManager<User> UserManager { get; set; }
         private SignInManager<User> SignInManager { get; set; }
         private IConfiguration Configuration { get; set; }
+        private IStringLocalizer<AuthController> Localizer { get; set; }
+        private ResourceService Resourse { get; set; }
         public AuthController(
             UserManager<User> userManager,
             SignInManager<User> signInManager,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            IStringLocalizer<AuthController> localizer,
+            ResourceService resourse)
         {
             UserManager = userManager;
             SignInManager = signInManager;
             Configuration = configuration;
+            Localizer = localizer;
+            Resourse = resourse;
         }
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel model)
@@ -77,14 +85,14 @@ namespace ManageMoneyServer.Controllers
             if (user == null)
             {
                 Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-                ModelState.AddModelError("email", Properties.Messages.UserNotFound);
+                ModelState.AddModelError("email", Localizer["UserNotFound"]);
             } else
             {
                 Microsoft.AspNetCore.Identity.SignInResult signinResult = await SignInManager.CheckPasswordSignInAsync(user, model.Password, false);
 
                 if (!signinResult.Succeeded)
                 {
-                    return Unauthorized(Properties.Messages.UnableAuthorize);
+                    return Unauthorized(Localizer["UnableAuthorize"]);
                 } else
                 {
                     List<Claim> claims = new List<Claim>

@@ -117,34 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AuthorizationSuccessful" xml:space="preserve">
-    <value>Authorization successful</value>
+  <data name="ConfirmPassword" xml:space="preserve">
+    <value>Confirm password</value>
   </data>
-  <data name="CantRegisterAccount" xml:space="preserve">
-    <value>Failed to register account</value>
+  <data name="Email" xml:space="preserve">
+    <value>Email</value>
   </data>
-  <data name="CompareError" xml:space="preserve">
-    <value>The "{0}" field does not match the "{1}" field</value>
+  <data name="FullName" xml:space="preserve">
+    <value>Full name</value>
   </data>
-  <data name="EmailError" xml:space="preserve">
-    <value>The value you entered is not an email</value>
-  </data>
-  <data name="OperationSuccessful" xml:space="preserve">
-    <value>The operation was successful</value>
-  </data>
-  <data name="RequiredError" xml:space="preserve">
-    <value>The "{0}" field is required</value>
-  </data>
-  <data name="StringLengthError" xml:space="preserve">
-    <value>The length of the "{0}" field must be less than {1} and greater than {2}</value>
-  </data>
-  <data name="UnableAuthorize" xml:space="preserve">
-    <value>Unable to authorize user</value>
-  </data>
-  <data name="UserNotFound" xml:space="preserve">
-    <value>The user with the specified email could not be found</value>
-  </data>
-  <data name="ValidationErrors" xml:space="preserve">
-    <value>One or more validation errors occurred</value>
+  <data name="Password" xml:space="preserve">
+    <value>Password</value>
   </data>
 </root>

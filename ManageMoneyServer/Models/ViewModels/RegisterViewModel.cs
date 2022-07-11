@@ -1,14 +1,15 @@
-﻿using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace ManageMoneyServer.Models.ViewModels
 {
     public class RegisterViewModel : LoginViewModel
     {
-        [Required(ErrorMessageResourceType = typeof(Properties.Messages), ErrorMessageResourceName = "RequiredError")]
-        [StringLength(32, MinimumLength = 2, ErrorMessageResourceType = typeof(Properties.Messages), ErrorMessageResourceName = "StringLengthError")]
+        [Display(Name = "FullName", ResourceType = typeof(Resources.Fields))]
+        [Required(ErrorMessageResourceName = "RequiredError", ErrorMessageResourceType = typeof(Resources.Messages))]
+        [StringLength(32, MinimumLength = 2, ErrorMessageResourceName = "StringLengthError", ErrorMessageResourceType = typeof(Resources.Messages))]
         public string FullName { get; set; }
-        [Compare("Password", ErrorMessageResourceType = typeof(Properties.Messages), ErrorMessageResourceName = "CompareError")]
+        [Display(Name = "ConfirmPassword", ResourceType = typeof(Resources.Fields))]
+        [Compare("Password", ErrorMessageResourceName = "CompareError", ErrorMessageResourceType = typeof(Resources.Messages))]
         public string ConfirmPassword { get; set; }
     }
 }

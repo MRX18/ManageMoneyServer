@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ManageMoneyServer.Properties {
+namespace ManageMoneyServer.Resources {
     using System;
     
     
@@ -22,7 +22,7 @@ namespace ManageMoneyServer.Properties {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Messages {
+    public class Messages {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,10 +36,10 @@ namespace ManageMoneyServer.Properties {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ManageMoneyServer.Properties.Messages", typeof(Messages).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ManageMoneyServer.Resources.Messages", typeof(Messages).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -51,7 +51,7 @@ namespace ManageMoneyServer.Properties {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -61,27 +61,9 @@ namespace ManageMoneyServer.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Authorization successful.
-        /// </summary>
-        internal static string AuthorizationSuccessful {
-            get {
-                return ResourceManager.GetString("AuthorizationSuccessful", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Failed to register account.
-        /// </summary>
-        internal static string CantRegisterAccount {
-            get {
-                return ResourceManager.GetString("CantRegisterAccount", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The &quot;{0}&quot; field does not match the &quot;{1}&quot; field.
         /// </summary>
-        internal static string CompareError {
+        public static string CompareError {
             get {
                 return ResourceManager.GetString("CompareError", resourceCulture);
             }
@@ -90,16 +72,43 @@ namespace ManageMoneyServer.Properties {
         /// <summary>
         ///   Looks up a localized string similar to The value you entered is not an email.
         /// </summary>
-        internal static string EmailError {
+        public static string EmailError {
             get {
                 return ResourceManager.GetString("EmailError", resourceCulture);
             }
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to get resource.
+        /// </summary>
+        public static string FailedResource {
+            get {
+                return ResourceManager.GetString("FailedResource", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The number of characters in the field &quot;{0}&quot; must be less than {1}.
+        /// </summary>
+        public static string MaxLengthError {
+            get {
+                return ResourceManager.GetString("MaxLengthError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The number of characters in the field &quot;{0}&quot; must be greater than {1}.
+        /// </summary>
+        public static string MinLengthError {
+            get {
+                return ResourceManager.GetString("MinLengthError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The operation was successful.
         /// </summary>
-        internal static string OperationSuccessful {
+        public static string OperationSuccessful {
             get {
                 return ResourceManager.GetString("OperationSuccessful", resourceCulture);
             }
@@ -108,7 +117,7 @@ namespace ManageMoneyServer.Properties {
         /// <summary>
         ///   Looks up a localized string similar to The &quot;{0}&quot; field is required.
         /// </summary>
-        internal static string RequiredError {
+        public static string RequiredError {
             get {
                 return ResourceManager.GetString("RequiredError", resourceCulture);
             }
@@ -117,34 +126,16 @@ namespace ManageMoneyServer.Properties {
         /// <summary>
         ///   Looks up a localized string similar to The length of the &quot;{0}&quot; field must be less than {1} and greater than {2}.
         /// </summary>
-        internal static string StringLengthError {
+        public static string StringLengthError {
             get {
                 return ResourceManager.GetString("StringLengthError", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unable to authorize user.
-        /// </summary>
-        internal static string UnableAuthorize {
-            get {
-                return ResourceManager.GetString("UnableAuthorize", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The user with the specified email could not be found.
-        /// </summary>
-        internal static string UserNotFound {
-            get {
-                return ResourceManager.GetString("UserNotFound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to One or more validation errors occurred.
         /// </summary>
-        internal static string ValidationErrors {
+        public static string ValidationErrors {
             get {
                 return ResourceManager.GetString("ValidationErrors", resourceCulture);
             }

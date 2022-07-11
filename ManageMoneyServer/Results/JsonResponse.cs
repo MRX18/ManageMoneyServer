@@ -6,8 +6,10 @@ namespace ManageMoneyServer.Results
 {
     public class JsonResponse : JsonResult
     {
+        public JsonResponse() : this(null) { }
         public JsonResponse(object value) 
             : this(string.Empty, value) { }
+        public JsonResponse(string message) : this(message, null) { }
         public JsonResponse(string message, object value) 
             : this(HttpStatusCode.OK, message, value) { }
         public JsonResponse(NotificationType notificationType, string message, object value) 

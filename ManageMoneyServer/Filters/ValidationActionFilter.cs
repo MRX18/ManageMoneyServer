@@ -1,25 +1,29 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using System;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace ManageMoneyServer.Filters
 {
-    public class ValidationActionFilter : ActionFilterAttribute
+    public class ValidationActionFilter : Attribute, IAsyncResultFilter
     {
-        public override void OnActionExecuted(ActionExecutedContext context) 
-        { 
-            if(!context.ModelState.IsValid)
+        public async Task OnResultExecutionAsync(ResultExecutingContext context, ResultExecutionDelegate next)
+        {
+            if (!context.ModelState.IsValid)
             {
-                if(context.HttpContext.Response.StatusCode == (int)HttpStatusCode.OK)
+                if (context.HttpContext.Response.StatusCode == (int)HttpStatusCode.OK)
                 {
                     context.HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                 }
 
-                context.Result = (context.Controller as ControllerBase).ValidationProblem(new ValidationProblemDetails(context.ModelState) 
-                { 
+                context.Result = (context.Controller as ControllerBase).ValidationProblem(new ValidationProblemDetails(context.ModelState)
+                {
                     Status = context.HttpContext.Response.StatusCode
                 });
             }
+
+            await next();
         }
     }
 }
