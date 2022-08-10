@@ -4,35 +4,22 @@ using ManageMoneyServer.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ManageMoneyServer.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20220726183807_AssetTypeValue")]
+    partial class AssetTypeValue
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("ProductVersion", "5.0.15")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-            modelBuilder.Entity("AssetSource", b =>
-                {
-                    b.Property<int>("AssetsAssetId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SourcesSourceId")
-                        .HasColumnType("int");
-
-                    b.HasKey("AssetsAssetId", "SourcesSourceId");
-
-                    b.HasIndex("SourcesSourceId");
-
-                    b.ToTable("AssetSource");
-                });
 
             modelBuilder.Entity("AssetTypeSource", b =>
                 {
@@ -71,6 +58,9 @@ namespace ManageMoneyServer.Migrations
                     b.Property<string>("Slug")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("SourceId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Sumbol")
                         .HasColumnType("nvarchar(max)");
 
@@ -79,6 +69,8 @@ namespace ManageMoneyServer.Migrations
                     b.HasIndex("AssetTypeId");
 
                     b.HasIndex("LanguageId");
+
+                    b.HasIndex("SourceId");
 
                     b.ToTable("Assets");
                 });
@@ -346,21 +338,6 @@ namespace ManageMoneyServer.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("AssetSource", b =>
-                {
-                    b.HasOne("ManageMoneyServer.Models.Asset", null)
-                        .WithMany()
-                        .HasForeignKey("AssetsAssetId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ManageMoneyServer.Models.Source", null)
-                        .WithMany()
-                        .HasForeignKey("SourcesSourceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("AssetTypeSource", b =>
                 {
                     b.HasOne("ManageMoneyServer.Models.AssetType", null)
@@ -388,9 +365,17 @@ namespace ManageMoneyServer.Migrations
                         .WithMany("Assets")
                         .HasForeignKey("LanguageId");
 
+                    b.HasOne("ManageMoneyServer.Models.Source", "Source")
+                        .WithMany()
+                        .HasForeignKey("SourceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("AssetType");
 
                     b.Navigation("Language");
+
+                    b.Navigation("Source");
                 });
 
             modelBuilder.Entity("ManageMoneyServer.Models.AssetType", b =>

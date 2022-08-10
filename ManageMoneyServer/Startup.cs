@@ -1,5 +1,5 @@
-using ManageMoneyServer.Filters;
 using ManageMoneyServer.Models;
+using ManageMoneyServer.Repositories;
 using ManageMoneyServer.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -15,6 +15,7 @@ using Microsoft.OpenApi.Models;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace ManageMoneyServer
 {
@@ -36,7 +37,11 @@ namespace ManageMoneyServer
             //    o.Filters.Add(typeof(LocalizerActionFilter));
             //}).AddDataAnnotationsLocalization();
 
-            services.AddControllers().AddDataAnnotationsLocalization();
+            services.AddControllers()
+                .AddNewtonsoftJson(options => {
+                    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                })
+                .AddDataAnnotationsLocalization();
 
             services.AddCors();
 
@@ -75,6 +80,12 @@ namespace ManageMoneyServer
                 });
 
             services.AddSingleton<ResourceService>();
+            services.AddSingleton<RequestService>();
+
+            services.AddScoped<SourceService>();
+            services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
+
+            DataSeed.Seed(services);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

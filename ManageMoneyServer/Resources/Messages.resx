@@ -132,6 +132,9 @@
   <data name="MinLengthError" xml:space="preserve">
     <value>The number of characters in the field "{0}" must be greater than {1}</value>
   </data>
+  <data name="OperationFailed" xml:space="preserve">
+    <value>The operation failed</value>
+  </data>
   <data name="OperationSuccessful" xml:space="preserve">
     <value>The operation was successful</value>
   </data>

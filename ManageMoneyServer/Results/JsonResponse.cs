@@ -12,6 +12,8 @@ namespace ManageMoneyServer.Results
         public JsonResponse(string message) : this(message, null) { }
         public JsonResponse(string message, object value) 
             : this(HttpStatusCode.OK, message, value) { }
+        public JsonResponse(NotificationType notificationType, string message)
+            : this(notificationType, message, null) { }
         public JsonResponse(NotificationType notificationType, string message, object value) 
             : this(HttpStatusCode.OK, notificationType, message, value) { }
         public JsonResponse(HttpStatusCode statusCode, string message, object value)

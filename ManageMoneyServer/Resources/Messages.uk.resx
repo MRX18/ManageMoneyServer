@@ -132,6 +132,9 @@
   <data name="MinLengthError" xml:space="preserve">
     <value>Кількість символів в полі "{0}" повинно бути більше ніж {1}</value>
   </data>
+  <data name="OperationFailed" xml:space="preserve">
+    <value>Не вдалося виконати операцію</value>
+  </data>
   <data name="OperationSuccessful" xml:space="preserve">
     <value>Операція пройшла успішно</value>
   </data>
