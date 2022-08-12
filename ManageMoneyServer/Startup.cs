@@ -105,7 +105,7 @@ namespace ManageMoneyServer
             };
 
             app.UseRequestLocalization(new RequestLocalizationOptions { 
-                DefaultRequestCulture = new RequestCulture("uk"),
+                DefaultRequestCulture = new RequestCulture("en"),
                 SupportedCultures = supportedCultures,
                 SupportedUICultures = supportedCultures
             });

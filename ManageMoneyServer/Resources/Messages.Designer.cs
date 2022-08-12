@@ -79,6 +79,15 @@ namespace ManageMoneyServer.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to get asset price {0} from {1}.
+        /// </summary>
+        public static string FailedGetPrice {
+            get {
+                return ResourceManager.GetString("FailedGetPrice", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to get resource.
         /// </summary>
         public static string FailedResource {

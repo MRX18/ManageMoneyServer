@@ -14,6 +14,7 @@ namespace ManageMoneyServer.Api.Exchanges
     {
         public string SourceName => "Binance";
         public string Slug => "binance";
+        public string SymbolTo => "USDT";
         public List<AssetTypes> Types => new List<AssetTypes> { AssetTypes.Cryptocurrency };
         public List<string> Urls => new List<string> { "https://api.binance.com/", "https://www.binance.com/bapi/" };
         private RequestService Request { get; set; }
@@ -27,7 +28,7 @@ namespace ManageMoneyServer.Api.Exchanges
         {
             try
             {
-                JObject json = await Request.Get(Urls[1] + "asset/v2/public/asset/asset/get-all-asset");
+                JToken json = await Request.Get(Urls[1] + "asset/v2/public/asset/asset/get-all-asset");
                 string symbols = json["data"].ToString();
 
                 if (!string.IsNullOrEmpty(symbols))
@@ -49,14 +50,51 @@ namespace ManageMoneyServer.Api.Exchanges
             return null;
         }
 
-        public Task<Tuple<string, decimal>> GetAssetPrice(string symbol)
+        /// <param name="symbol">Examle: BTC</param>
+        public async Task<Tuple<string, decimal>> GetAssetPrice(string symbol)
         {
-            throw new NotImplementedException();
+            symbol = symbol.ToUpper();
+            if (string.IsNullOrEmpty(symbol))
+                throw new ArgumentNullException($"Variable \"{nameof(symbol)}\" is null or empty");
+
+            Tuple<string, decimal> result = null;
+            try
+            {
+                JObject json = (await Request.Get(Urls[0] + "api/v3/ticker/price", new Dictionary<string, string> { ["symbol"] = symbol + SymbolTo })) as JObject;
+
+                if (json.ContainsKey("symbol") && json.ContainsKey("price"))
+                {
+                    result = new Tuple<string, decimal>(json.Value<string>("symbol"), json.Value<decimal>("price"));
+                }
+            } catch(Exception ex)
+            {
+                // TODO: Add logger
+            }
+            return result;
         }
 
-        public Task<Dictionary<string, decimal>> GetAssetsPrice(params string[] symbols)
+        public async Task<Dictionary<string, decimal>> GetAssetsPrice(params string[] symbols)
         {
-            throw new NotImplementedException();
+            if (symbols == null || symbols.Count() == 0 && symbols.Any(s => string.IsNullOrEmpty(s)))
+                throw new ArgumentNullException($"Array \"{nameof(symbols)}\" is null or empty");
+
+            Dictionary<string, decimal> result = new Dictionary<string, decimal>();
+            try
+            {
+                JArray json = (await Request.Get(Urls[0] + $"api/v3/ticker/price", new Dictionary<string, string> { ["symbols"] = JsonConvert.SerializeObject(symbols.Select(s => s.ToUpper() + SymbolTo)) })) as JArray;
+                foreach(JObject item in json)
+                {
+                    if (item.ContainsKey("symbol") && item.ContainsKey("price"))
+                    {
+                        result.Add(item.Value<string>("symbol"), item.Value<decimal>("price"));
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // TODO: Add logger
+            }
+            return result;
         }
 
         public Task<Dictionary<DateTime, decimal>> GetHistoryPrices(string symbol, DateTime start, DateTime end)

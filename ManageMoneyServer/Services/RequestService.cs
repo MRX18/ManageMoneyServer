@@ -9,7 +9,7 @@ namespace ManageMoneyServer.Services
 {
     public class RequestService
     {
-        private async Task<JObject> Request(string url, string method = "GET", byte[] data = null)
+        private async Task<JToken> Request(string url, string method = "GET", byte[] data = null)
         {
             byte[] bytes = null;
             using (WebClient client = new WebClient())
@@ -28,13 +28,13 @@ namespace ManageMoneyServer.Services
 
                 if (!string.IsNullOrEmpty(result))
                 {
-                    return JObject.Parse(result);
+                    return JToken.Parse(result);
                 }
             }
 
             return null;
         }
-        public async Task<JObject> Get(string url, Dictionary<string, string> @params = null)
+        public async Task<JToken> Get(string url, Dictionary<string, string> @params = null)
         {
             StringBuilder queryParam = new StringBuilder();
 

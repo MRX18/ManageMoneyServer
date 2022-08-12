@@ -123,6 +123,9 @@
   <data name="EmailError" xml:space="preserve">
     <value>Введене значення не є електронною поштою</value>
   </data>
+  <data name="FailedGetPrice" xml:space="preserve">
+    <value>Не вдалося отримати ціну активу {0} від {1}</value>
+  </data>
   <data name="FailedResource" xml:space="preserve">
     <value>Не вдалося отримати ресурс</value>
   </data>

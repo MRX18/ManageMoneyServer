@@ -123,6 +123,9 @@
   <data name="EmailError" xml:space="preserve">
     <value>The value you entered is not an email</value>
   </data>
+  <data name="FailedGetPrice" xml:space="preserve">
+    <value>Failed to get asset price {0} from {1}</value>
+  </data>
   <data name="FailedResource" xml:space="preserve">
     <value>Failed to get resource</value>
   </data>

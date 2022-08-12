@@ -60,6 +60,16 @@ namespace ManageMoneyServer.Services
             return false;
         }
 
+        public bool Contains(string slug)
+        {
+            if (!string.IsNullOrEmpty(slug))
+            {
+                return Sources.ContainsKey(slug.ToLower());
+            }
+
+            return false;
+        }
+
         public IEnumerator<ISource> GetEnumerator()
         {
             return Sources.Values.GetEnumerator();

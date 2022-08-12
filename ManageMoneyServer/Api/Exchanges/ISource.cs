@@ -15,6 +15,7 @@ namespace ManageMoneyServer.Api.Exchanges
     {
         public string SourceName { get; }
         public string Slug { get; }
+        public string SymbolTo { get; }
         public List<AssetTypes> Types { get; }
         public List<string> Urls { get; }
         public Task<IEnumerable<Asset>> GetAssets();
