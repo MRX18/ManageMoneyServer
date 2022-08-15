@@ -45,6 +45,8 @@ namespace ManageMoneyServer
 
             services.AddCors();
 
+            services.AddResponseCaching();
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ManageMoneyServer", Version = "v1" });
@@ -109,6 +111,8 @@ namespace ManageMoneyServer
                 SupportedCultures = supportedCultures,
                 SupportedUICultures = supportedCultures
             });
+
+            app.UseResponseCaching();
 
             app.UseHttpsRedirection();
 

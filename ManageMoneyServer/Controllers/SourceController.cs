@@ -55,6 +55,7 @@ namespace ManageMoneyServer.Controllers
             return Ok("assets");
         }
         [HttpGet]
+        [ResponseCache(Duration = 60)]
         public async Task<IActionResult> Price([Required][StringLength(16, MinimumLength = 2)]string source,
             [Required][StringLength(5, MinimumLength = 1)]string symbol)
         {
