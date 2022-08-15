@@ -34,14 +34,14 @@ namespace ManageMoneyServer.Services
 
             return null;
         }
-        public async Task<JToken> Get(string url, Dictionary<string, string> @params = null)
+        public async Task<JToken> Get(string url, Dictionary<string, object> @params = null)
         {
             StringBuilder queryParam = new StringBuilder();
 
             if (@params != null && @params.Count > 0)
             {
                 string splitter = "?";
-                foreach (KeyValuePair<string, string> param in @params)
+                foreach (KeyValuePair<string, object> param in @params)
                 {
                     queryParam.Append(splitter + param.Key + "=" + param.Value);
                     splitter = "&";

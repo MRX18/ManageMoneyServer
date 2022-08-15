@@ -65,5 +65,10 @@ namespace ManageMoneyServer.Controllers
             }
             return new JsonResponse(NotificationType.Error, string.Format(Resource.Messages["FailedGetPrice"], symbol, source));
         }
+
+        public async Task<IActionResult> Test()
+        {
+            return Ok("Test");
+        }
     }
 }

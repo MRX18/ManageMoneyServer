@@ -60,7 +60,7 @@ namespace ManageMoneyServer.Api.Exchanges
             Tuple<string, decimal> result = null;
             try
             {
-                JObject json = (await Request.Get(Urls[0] + "api/v3/ticker/price", new Dictionary<string, string> { ["symbol"] = symbol + SymbolTo })) as JObject;
+                JObject json = (await Request.Get(Urls[0] + "api/v3/ticker/price", new Dictionary<string, object> { ["symbol"] = symbol + SymbolTo })) as JObject;
 
                 if (json.ContainsKey("symbol") && json.ContainsKey("price"))
                 {
@@ -81,7 +81,7 @@ namespace ManageMoneyServer.Api.Exchanges
             Dictionary<string, decimal> result = new Dictionary<string, decimal>();
             try
             {
-                JArray json = (await Request.Get(Urls[0] + $"api/v3/ticker/price", new Dictionary<string, string> { ["symbols"] = JsonConvert.SerializeObject(symbols.Select(s => s.ToUpper() + SymbolTo)) })) as JArray;
+                JArray json = (await Request.Get(Urls[0] + $"api/v3/ticker/price", new Dictionary<string, object> { ["symbols"] = JsonConvert.SerializeObject(symbols.Select(s => s.ToUpper() + SymbolTo)) })) as JArray;
                 foreach(JObject item in json)
                 {
                     if (item.ContainsKey("symbol") && item.ContainsKey("price"))
@@ -97,9 +97,83 @@ namespace ManageMoneyServer.Api.Exchanges
             return result;
         }
 
-        public Task<Dictionary<DateTime, decimal>> GetHistoryPrices(string symbol, DateTime start, DateTime end)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="symbol">Example: BTC</param>
+        /// <param name="start">Example: DateTime.Now.AddDays(-30)</param>
+        /// <param name="end">Example: DateTime.Now</param>
+        /// <returns></returns>
+        public async Task<Dictionary<DateTime, decimal>> GetHistoryPrices(string symbol, DateTime? start = null, DateTime? end = null)
         {
-            throw new NotImplementedException();
+            // Example response
+            //[
+            //  [
+            //    1499040000000,      // Open time
+            //    "0.01634790",       // Open
+            //    "0.80000000",       // High
+            //    "0.01575800",       // Low
+            //    "0.01577100",       // Close
+            //    "148976.11427815",  // Volume
+            //    1499644799999,      // Close time
+            //    "2434.19055334",    // Quote asset volume
+            //    308,                // Number of trades
+            //    "1756.87402397",    // Taker buy base asset volume
+            //    "28.46694368",      // Taker buy quote asset volume
+            //    "17928899.62484339" // Ignore.
+            //  ]
+            //]
+
+            symbol = symbol.ToUpper();
+            if (string.IsNullOrEmpty(symbol))
+                throw new ArgumentNullException($"Variable \"{nameof(symbol)}\" is null or empty");
+
+            Dictionary<DateTime, decimal> result = new Dictionary<DateTime, decimal>();
+            try
+            {
+                Dictionary<string, object> @params = new Dictionary<string, object> 
+                { 
+                    ["symbol"] = symbol + SymbolTo,
+                    ["interval"] = "1d"
+                };
+
+                if(start.HasValue)
+                {
+                    @params.Add("startTime", DateTimeToUnixTime(start.Value));
+                }
+
+                if (start.HasValue)
+                {
+                    @params.Add("endTime", DateTimeToUnixTime(end.Value));
+                }
+
+                JArray json = (await Request.Get(Urls[0] + $"api/v3/klines", @params)) as JArray;
+                foreach (JArray item in json)
+                {
+                    result.Add(UnixTimeToDateTime(Convert.ToInt64(item.ToArray()[0])), Convert.ToDecimal(item.ToArray()[1]));
+
+                    //open data
+                    //DateTime openDate = UnixTimeToDateTime(Convert.ToInt64(item.ToArray()[0]));
+                    //decimal openPrice = Convert.ToDecimal(item.ToArray()[1]);
+
+                    //close data
+                    //DateTime closeDate = UnixTimeToDateTime(Convert.ToInt64(item.ToArray()[6]));
+                    //decimal closePrice = Convert.ToDecimal(item.ToArray()[4]);
+                }
+            }
+            catch (Exception ex)
+            {
+                // TODO: Add logger
+            }
+            return result;
+        }
+        private long DateTimeToUnixTime(DateTime date)
+        {
+            return Convert.ToInt64((date - new DateTime(1970, 1, 1)).TotalMilliseconds);
+        }
+        private DateTime UnixTimeToDateTime(long unixTime)
+        {
+            return new DateTime(1970, 1, 1).AddMilliseconds(unixTime);
         }
     }
 }

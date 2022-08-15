@@ -21,6 +21,6 @@ namespace ManageMoneyServer.Api.Exchanges
         public Task<IEnumerable<Asset>> GetAssets();
         public Task<Tuple<string, decimal>> GetAssetPrice(string symbol);
         public Task<Dictionary<string, decimal>> GetAssetsPrice(params string[] symbols);
-        public Task<Dictionary<DateTime, decimal>> GetHistoryPrices(string symbol, DateTime start, DateTime end);
+        public Task<Dictionary<DateTime, decimal>> GetHistoryPrices(string symbol, DateTime? start = null, DateTime? end = null);
     }
 }
