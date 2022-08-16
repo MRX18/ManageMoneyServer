@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Collections.Generic;
@@ -53,6 +54,10 @@ namespace ManageMoneyServer
             });
 
             services.AddDbContext<ApplicationContext>(option => {
+                option.UseLoggerFactory(LoggerFactory.Create(builder => {
+                    builder.AddConsole();
+                    builder.AddDebug();
+                }));
                 option.UseSqlServer(Configuration["ConnectionStrings:DefaultConnection"]);
             });
 
