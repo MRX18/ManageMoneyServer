@@ -14,6 +14,7 @@ namespace ManageMoneyServer.Services
             byte[] bytes = null;
             using (WebClient client = new WebClient())
             {
+                client.Headers.Add(HttpRequestHeader.Accept, "*/*");
                 client.Encoding = Encoding.UTF8;
                 switch(method.ToUpper())
                 {

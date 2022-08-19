@@ -151,14 +151,6 @@ namespace ManageMoneyServer.Api.Exchanges
                 foreach (JArray item in json)
                 {
                     result.Add(UnixTimeToDateTime(Convert.ToInt64(item.ToArray()[0])), Convert.ToDecimal(item.ToArray()[1]));
-
-                    //open data
-                    //DateTime openDate = UnixTimeToDateTime(Convert.ToInt64(item.ToArray()[0]));
-                    //decimal openPrice = Convert.ToDecimal(item.ToArray()[1]);
-
-                    //close data
-                    //DateTime closeDate = UnixTimeToDateTime(Convert.ToInt64(item.ToArray()[6]));
-                    //decimal closePrice = Convert.ToDecimal(item.ToArray()[4]);
                 }
             }
             catch (Exception ex)

@@ -14,6 +14,7 @@ namespace ManageMoneyServer.Services
     {
         private Dictionary<string, ISource> Sources { get; set; } = new Dictionary<string, ISource>();
         public ISource Binance { get; set; }
+        public ISource Nasdaq { get; set; }
         public ISource this[string index]
         {
             get 
@@ -48,6 +49,9 @@ namespace ManageMoneyServer.Services
         {
             Binance = new BinanceSource(request);
             Sources.Add(Binance.Slug, Binance);
+
+            Nasdaq = new NasdaqSource(request);
+            Sources.Add(Nasdaq.Slug, Nasdaq);
         }
 
         public bool Contains(string slug, AssetTypes type)
