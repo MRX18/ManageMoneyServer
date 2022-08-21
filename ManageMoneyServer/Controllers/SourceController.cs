@@ -76,6 +76,23 @@ namespace ManageMoneyServer.Controllers
                 return new JsonResponse(NotificationType.Error, Resource.Messages["OperationFailed"]);
             }
         }
+        [HttpGet]
+        public async Task<IActionResult> Index(AssetTypes? type = null)
+        {
+            try
+            {
+                if (type.HasValue)
+                    return new JsonResponse(NotificationType.Success, Resource.Messages["OperationSuccessful"],
+                        await SourceRepository.GetListAsync(s => s.AssetTypes.Any(t => t.Value == (int)type.Value)));
+                else
+                    return new JsonResponse(NotificationType.Success, Resource.Messages["OperationSuccessful"], await SourceRepository.GetListAsync());
+            }
+            catch (Exception ex)
+            {
+                // TODO: add logger
+                return new JsonResponse(NotificationType.Error, Resource.Messages["OperationFailed"]);
+            }
+        }
         [HttpPut]
         public async Task<IActionResult> Assets(string source = null)
         {
