@@ -21,15 +21,18 @@ namespace ManageMoneyServer.Controllers
         private ResourceService Resource { get; set; }
         private IRepository<Asset> AssetRepository { get; set; }
         private IRepository<Source> SourceRepository { get; set; }
+        private IRepository<AssetType> AssetTypeRepository { get; set; }
         public SourceController(SourceService source, 
             ResourceService resource, 
             IRepository<Asset> assetRepository,
-            IRepository<Source> sourceRepository)
+            IRepository<Source> sourceRepository,
+            IRepository<AssetType> assetTypeRepository)
         {
             Source = source;
             Resource = resource;
             AssetRepository = assetRepository;
             SourceRepository = sourceRepository;
+            AssetTypeRepository = assetTypeRepository;
         }
         [HttpPut]
         public async Task<IActionResult> Index()
@@ -44,10 +47,14 @@ namespace ManageMoneyServer.Controllers
                     Source current = sources.FirstOrDefault(s => s.Slug == source.Slug);
                     if (current == null)
                     {
+                        List<AssetType> types = await AssetTypeRepository.GetListAsync(at => source.Types.Contains((AssetTypes)at.Value));
+                        await AssetTypeRepository.Attach(types.ToArray());
+
                         sourcesToAdd.Add(new Source
                         {
                             Name = source.SourceName,
                             Slug = source.Slug,
+                            AssetTypes = types,
                             LanguageId = 1 // TODO: add deffault language id to context
                         });
                         continue;
