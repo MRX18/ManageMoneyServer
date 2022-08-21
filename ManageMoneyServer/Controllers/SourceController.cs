@@ -4,6 +4,7 @@ using ManageMoneyServer.Models.ViewModels;
 using ManageMoneyServer.Repositories;
 using ManageMoneyServer.Results;
 using ManageMoneyServer.Services;
+using ManageMoneyServer.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -17,12 +18,12 @@ namespace ManageMoneyServer.Controllers
     [ApiController]
     public class SourceController : ControllerBase
     {
-        private SourceService Source { get; set; }
+        private ISourceService Source { get; set; }
         private ResourceService Resource { get; set; }
         private IRepository<Asset> AssetRepository { get; set; }
         private IRepository<Source> SourceRepository { get; set; }
         private IRepository<AssetType> AssetTypeRepository { get; set; }
-        public SourceController(SourceService source, 
+        public SourceController(ISourceService source, 
             ResourceService resource, 
             IRepository<Asset> assetRepository,
             IRepository<Source> sourceRepository,

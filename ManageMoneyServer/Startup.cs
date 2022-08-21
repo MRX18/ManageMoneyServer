@@ -1,6 +1,7 @@
 using ManageMoneyServer.Models;
 using ManageMoneyServer.Repositories;
 using ManageMoneyServer.Services;
+using ManageMoneyServer.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -89,7 +90,7 @@ namespace ManageMoneyServer
             services.AddSingleton<ResourceService>();
             services.AddSingleton<RequestService>();
 
-            services.AddScoped<SourceService>();
+            services.AddScoped<ISourceService, SourceService>();
             services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
 
             DataSeed.Seed(services);

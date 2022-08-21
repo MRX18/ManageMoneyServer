@@ -1,5 +1,4 @@
 ﻿using ManageMoneyServer.Api.Exchanges;
-using ManageMoneyServer.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -7,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
+using ManageMoneyServer.Services.Interfaces;
 
 namespace ManageMoneyServer.Models
 {
@@ -18,7 +18,7 @@ namespace ManageMoneyServer.Models
             ApplicationContext context = serviceProvider.GetRequiredService<ApplicationContext>();
             if (context.Languages.Count() == 0)
             {
-                SourceService sourceService = serviceProvider.GetRequiredService<SourceService>();
+                ISourceService sourceService = serviceProvider.GetRequiredService<ISourceService>();
                 UserManager<User> userManager = serviceProvider.GetRequiredService<UserManager<User>>();
 
                 #region Clear all tables

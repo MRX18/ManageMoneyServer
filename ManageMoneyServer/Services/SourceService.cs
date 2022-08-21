@@ -2,6 +2,7 @@
 using ManageMoneyServer.Models;
 using ManageMoneyServer.Models.ViewModels;
 using ManageMoneyServer.Repositories;
+using ManageMoneyServer.Services.Interfaces;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace ManageMoneyServer.Services
 {
-    public class SourceService : IEnumerable<ISource>
+    public class SourceService : ISourceService
     {
         private Dictionary<string, ISource> Sources { get; set; } = new Dictionary<string, ISource>();
         public ISource Binance { get; set; }
