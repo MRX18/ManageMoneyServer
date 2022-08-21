@@ -20,13 +20,54 @@ namespace ManageMoneyServer.Controllers
         private SourceService Source { get; set; }
         private ResourceService Resource { get; set; }
         private IRepository<Asset> AssetRepository { get; set; }
+        private IRepository<Source> SourceRepository { get; set; }
         public SourceController(SourceService source, 
             ResourceService resource, 
-            IRepository<Asset> assetRepository)
+            IRepository<Asset> assetRepository,
+            IRepository<Source> sourceRepository)
         {
             Source = source;
             Resource = resource;
             AssetRepository = assetRepository;
+            SourceRepository = sourceRepository;
+        }
+        [HttpPut]
+        public async Task<IActionResult> Index()
+        {
+            try
+            {
+                List<Source> sources = await SourceRepository.GetListAsync();
+                List<Source> sourcesToAdd = new List<Source>();
+
+                foreach (ISource source in Source)
+                {
+                    Source current = sources.FirstOrDefault(s => s.Slug == source.Slug);
+                    if (current == null)
+                    {
+                        sourcesToAdd.Add(new Source
+                        {
+                            Name = source.SourceName,
+                            Slug = source.Slug,
+                            LanguageId = 1 // TODO: add deffault language id to context
+                        });
+                        continue;
+                    }
+                    sources.Remove(current);
+                }
+
+                await SourceRepository.CreateAsync(sourcesToAdd.ToArray());
+                await SourceRepository.RemoveAsync(sources.ToArray());
+
+                return new JsonResponse(NotificationType.Success, Resource.Messages["OperationSuccessful"], new SynchronizedViewModel<Source> 
+                { 
+                    Added = sourcesToAdd,
+                    Removed = sources
+                });
+            } catch (Exception ex)
+            {
+                // TODO: add logger
+                return new JsonResponse(NotificationType.Error, Resource.Messages["OperationFailed"]);
+            }
         }
         [HttpPut]
         public async Task<IActionResult> Assets(string source = null)
