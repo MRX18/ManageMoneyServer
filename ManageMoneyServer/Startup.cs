@@ -17,7 +17,6 @@ using Microsoft.OpenApi.Models;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
-using System.Text.Json.Serialization;
 
 namespace ManageMoneyServer
 {
@@ -46,8 +45,8 @@ namespace ManageMoneyServer
                 .AddDataAnnotationsLocalization();
 
             services.AddCors();
-
             services.AddResponseCaching();
+            services.AddHttpContextAccessor();
 
             services.AddSwaggerGen(c =>
             {
@@ -90,6 +89,7 @@ namespace ManageMoneyServer
             services.AddSingleton<ResourceService>();
             services.AddSingleton<RequestService>();
 
+            services.AddScoped<IContextService, ContextService>();
             services.AddScoped<ISourceService, SourceService>();
             services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
 

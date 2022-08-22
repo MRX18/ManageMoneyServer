@@ -18,17 +18,20 @@ namespace ManageMoneyServer.Controllers
     [ApiController]
     public class SourceController : ControllerBase
     {
+        private IContextService Context { get; set; }
         private ISourceService Source { get; set; }
         private ResourceService Resource { get; set; }
         private IRepository<Asset> AssetRepository { get; set; }
         private IRepository<Source> SourceRepository { get; set; }
         private IRepository<AssetType> AssetTypeRepository { get; set; }
-        public SourceController(ISourceService source, 
+        public SourceController(IContextService context,
+            ISourceService source, 
             ResourceService resource, 
             IRepository<Asset> assetRepository,
             IRepository<Source> sourceRepository,
             IRepository<AssetType> assetTypeRepository)
         {
+            Context = context;
             Source = source;
             Resource = resource;
             AssetRepository = assetRepository;
