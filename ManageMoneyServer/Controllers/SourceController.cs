@@ -98,19 +98,32 @@ namespace ManageMoneyServer.Controllers
             }
         }
         [HttpPut]
-        public async Task<IActionResult> Assets(string source = null)
+        public async Task<IActionResult> Assets(string source = null, AssetTypes? type = null)
         {
             try
             {
                 object result = null;
-                if (Source.Contains(source, AssetTypes.Cryptocurrency))
+                bool sourceHasValue = !string.IsNullOrEmpty(source);
+                if(sourceHasValue && type.HasValue)
                 {
-                    result = await Source.SynchronizeAssets(source);
-                }
-                else
+                    if(Source.Contains(source, type.Value))
+                    {
+                        result = await Source.SynchronizeAssets(source);
+                    }
+                } else if(sourceHasValue && !type.HasValue)
                 {
-                    result = await Source.SynchronizeAssets(AssetTypes.Cryptocurrency);
+                    if (Source.Contains(source))
+                    {
+                        result = await Source.SynchronizeAssets(source);
+                    }
+                } else if(!sourceHasValue && type.HasValue)
+                {
+                    result = await Source.SynchronizeAssets(type.Value);
+                } else
+                {
+                    result = await Source.SynchronizeAssets();
                 }
+
                 return new JsonResponse(NotificationType.Success, Resource.Messages["OperationSuccessful"], result);
             } catch(Exception ex)
             {
