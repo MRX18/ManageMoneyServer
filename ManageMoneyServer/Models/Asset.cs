@@ -23,7 +23,7 @@ namespace ManageMoneyServer.Models
 
         #region No mapped
         [NotMapped]
-        public AssetTypes AssetTypeValue { get; set; }
+        public AssetTypes Type { get; set; }
         #endregion
     }
 }

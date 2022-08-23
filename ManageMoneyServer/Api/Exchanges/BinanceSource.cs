@@ -39,7 +39,7 @@ namespace ManageMoneyServer.Api.Exchanges
                         Name = a.AssetName,
                         Sumbol = a.AssetCode,
                         Slug = a.AssetCode,
-                        AssetTypeValue = AssetTypes.Cryptocurrency
+                        Type = AssetTypes.Cryptocurrency
                     });
                 }
             } catch(Exception ex) 

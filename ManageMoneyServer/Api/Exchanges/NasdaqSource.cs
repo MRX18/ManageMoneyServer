@@ -72,7 +72,7 @@ namespace ManageMoneyServer.Api.Exchanges
                     Name = a.Name,
                     Sumbol = a.Symbol,
                     Slug = a.Symbol,
-                    AssetTypeValue = AssetTypes.Stocks
+                    Type = AssetTypes.Stocks
                 });
             } catch(Exception ex)
             {

@@ -31,18 +31,15 @@ namespace ManageMoneyServer.Services
         private IContextService Context { get; set; }
         private IRepository<Asset> AssetRepository { get; set; }
         private IRepository<Source> SourceRepository { get; set; }
-        private IRepository<AssetType> AssetTypeRepository { get; set; }
         public SourceService(
             IContextService context,
             RequestService request, 
             IRepository<Asset> assetRepository, 
-            IRepository<Source> sourceRepository,
-            IRepository<AssetType> assetTypeRepository)
+            IRepository<Source> sourceRepository)
         {
             Context = context;
             AssetRepository = assetRepository;
             SourceRepository = sourceRepository;
-            AssetTypeRepository = assetTypeRepository;
             Init(request);
         }
 
@@ -132,8 +129,6 @@ namespace ManageMoneyServer.Services
 
                 Source sourceInfo = await SourceRepository.FindAsync(s => s.Slug == source.Slug);
                 await SourceRepository.Attach(sourceInfo);
-                List<AssetType> assetTypes = await AssetTypeRepository.GetListAsync();
-
 
                 List<Asset> assets = await AssetRepository.GetListAsync(a => source.Types.Contains((AssetTypes)a.AssetType.Value), a => a.AssetType, a => a.Sources);
 
@@ -142,7 +137,7 @@ namespace ManageMoneyServer.Services
                     Asset sourceAsset = sourceAssets[i];
                     sourceAsset.Sources = new List<Source> { sourceInfo };
                     sourceAsset.LanguageId = Context.DefaultLanguage.LanguageId;
-                    sourceAsset.AssetTypeId = assetTypes.First(a => a.Value == (int)sourceAsset.AssetTypeValue).AssetTypeId;
+                    sourceAsset.AssetTypeId = Context.AssetTypes.First(a => a.Type == sourceAsset.Type).AssetTypeId;
 
                     Asset asset = assets.FirstOrDefault(a => a.Sumbol.Equals(sourceAsset.Sumbol, StringComparison.OrdinalIgnoreCase));
 

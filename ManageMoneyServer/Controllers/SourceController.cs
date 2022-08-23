@@ -51,7 +51,7 @@ namespace ManageMoneyServer.Controllers
                     Source current = sources.FirstOrDefault(s => s.Slug == source.Slug);
                     if (current == null)
                     {
-                        List<AssetType> types = await AssetTypeRepository.GetListAsync(at => source.Types.Contains((AssetTypes)at.Value));
+                        List<AssetType> types = await AssetTypeRepository.GetListAsync(at => source.Types.Contains(at.Type));
                         await AssetTypeRepository.Attach(types.ToArray());
 
                         sourcesToAdd.Add(new Source

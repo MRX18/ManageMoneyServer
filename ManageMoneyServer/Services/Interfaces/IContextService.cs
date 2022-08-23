@@ -1,4 +1,5 @@
 ﻿using ManageMoneyServer.Models;
+using System.Collections.Generic;
 
 namespace ManageMoneyServer.Services.Interfaces
 {
@@ -6,5 +7,6 @@ namespace ManageMoneyServer.Services.Interfaces
     {
         public Language DefaultLanguage { get; }
         public Language CurrentLanguage { get; }
+        public List<AssetType> AssetTypes { get; }
     }
 }

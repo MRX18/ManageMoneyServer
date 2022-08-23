@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using ManageMoneyServer.Api.Exchanges;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -16,5 +17,7 @@ namespace ManageMoneyServer.Models
         [JsonIgnore]
         [ForeignKey("LanguageId")]
         public Language Language { get; set; }
+        [NotMapped]
+        public AssetTypes Type => (AssetTypes)Value;
     }
 }
