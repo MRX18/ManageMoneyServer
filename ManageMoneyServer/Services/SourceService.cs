@@ -28,20 +28,20 @@ namespace ManageMoneyServer.Services
                 throw new Exception($"Index\"{index}\" not found");
             }
         }
+        private IContextService Context { get; set; }
         private IRepository<Asset> AssetRepository { get; set; }
         private IRepository<Source> SourceRepository { get; set; }
-        private IRepository<Language> LanguageRepository { get; set; }
         private IRepository<AssetType> AssetTypeRepository { get; set; }
         public SourceService(
+            IContextService context,
             RequestService request, 
             IRepository<Asset> assetRepository, 
             IRepository<Source> sourceRepository,
-            IRepository<Language> languageRepository,
             IRepository<AssetType> assetTypeRepository)
         {
+            Context = context;
             AssetRepository = assetRepository;
             SourceRepository = sourceRepository;
-            LanguageRepository = languageRepository;
             AssetTypeRepository = assetTypeRepository;
             Init(request);
         }
@@ -132,7 +132,6 @@ namespace ManageMoneyServer.Services
 
                 Source sourceInfo = await SourceRepository.FindAsync(s => s.Slug == source.Slug);
                 await SourceRepository.Attach(sourceInfo);
-                Language language = await LanguageRepository.FindAsync(l => l.Symbol == "EN");
                 List<AssetType> assetTypes = await AssetTypeRepository.GetListAsync();
 
 
@@ -142,9 +141,8 @@ namespace ManageMoneyServer.Services
                 {
                     Asset sourceAsset = sourceAssets[i];
                     sourceAsset.Sources = new List<Source> { sourceInfo };
-                    sourceAsset.LanguageId = language.LanguageId;
+                    sourceAsset.LanguageId = Context.DefaultLanguage.LanguageId;
                     sourceAsset.AssetTypeId = assetTypes.First(a => a.Value == (int)sourceAsset.AssetTypeValue).AssetTypeId;
-
 
                     Asset asset = assets.FirstOrDefault(a => a.Sumbol.Equals(sourceAsset.Sumbol, StringComparison.OrdinalIgnoreCase));
 

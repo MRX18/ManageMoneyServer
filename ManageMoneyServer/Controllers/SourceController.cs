@@ -59,7 +59,7 @@ namespace ManageMoneyServer.Controllers
                             Name = source.SourceName,
                             Slug = source.Slug,
                             AssetTypes = types,
-                            LanguageId = 1 // TODO: add deffault language id to context
+                            LanguageId = Context.DefaultLanguage.LanguageId
                         });
                         continue;
                     }
