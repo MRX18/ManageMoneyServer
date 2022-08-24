@@ -1,0 +1,15 @@
+2022-08-24T22:55:24.5822317+03:00  [INF] Now listening on: "https://localhost:5001" (d826f4b8)
+2022-08-24T22:55:24.5898069+03:00  [INF] Now listening on: "http://localhost:5000" (d826f4b8)
+2022-08-24T22:55:24.5933348+03:00  [INF] Application started. Press Ctrl+C to shut down. (dcaefe54)
+2022-08-24T22:55:24.5962005+03:00  [INF] Hosting environment: "Development" (c3307c92)
+2022-08-24T22:55:24.5990457+03:00  [INF] Content root path: "C:\Users\romab\source\repos\ManageMoneyServer\ManageMoneyServer" (b5d60022)
+2022-08-24T22:55:26.7145314+03:00 0HMK61AAVT5PS:00000001 [ERR] An unhandled exception has occurred while executing the request. (48a46595)
+Swashbuckle.AspNetCore.SwaggerGen.SwaggerGeneratorException: Ambiguous HTTP method for action - ManageMoneyServer.Controllers.ServiceController.Resourses (ManageMoneyServer). Actions require an explicit HttpMethod binding for Swagger/OpenAPI 3.0
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateOperations(IEnumerable`1 apiDescriptions, SchemaRepository schemaRepository)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GeneratePaths(IEnumerable`1 apiDescriptions, SchemaRepository schemaRepository)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GetSwagger(String documentName, String host, String basePath)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddleware.Invoke(HttpContext context)
+2022-08-24T22:55:35.4658336+03:00 0HMK61AAVT5PU:00000002 [ERR] Test message (bfb2b713)
+System.Exception: Test exception
+   at ManageMoneyServer.Controllers.SourceController.Test() in C:\Users\romab\source\repos\ManageMoneyServer\ManageMoneyServer\Controllers\SourceController.cs:line 186

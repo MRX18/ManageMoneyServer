@@ -6,6 +6,7 @@ using ManageMoneyServer.Results;
 using ManageMoneyServer.Services;
 using ManageMoneyServer.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -18,19 +19,23 @@ namespace ManageMoneyServer.Controllers
     [ApiController]
     public class SourceController : ControllerBase
     {
+        private ILogger<SourceController> Logger { get; set; }
         private IContextService Context { get; set; }
         private ISourceService Source { get; set; }
         private ResourceService Resource { get; set; }
         private IRepository<Asset> AssetRepository { get; set; }
         private IRepository<Source> SourceRepository { get; set; }
         private IRepository<AssetType> AssetTypeRepository { get; set; }
-        public SourceController(IContextService context,
+        public SourceController(
+            ILogger<SourceController> logger,
+            IContextService context,
             ISourceService source, 
             ResourceService resource, 
             IRepository<Asset> assetRepository,
             IRepository<Source> sourceRepository,
             IRepository<AssetType> assetTypeRepository)
         {
+            Logger = logger;
             Context = context;
             Source = source;
             Resource = resource;
@@ -76,7 +81,7 @@ namespace ManageMoneyServer.Controllers
                 });
             } catch (Exception ex)
             {
-                // TODO: add logger
+                Logger.LogError(ex, "Failed to sync sources");
                 return new JsonResponse(NotificationType.Error, Resource.Messages["OperationFailed"]);
             }
         }
@@ -93,7 +98,7 @@ namespace ManageMoneyServer.Controllers
             }
             catch (Exception ex)
             {
-                // TODO: add logger
+                Logger.LogError(ex, "Failed to get source list", new { type });
                 return new JsonResponse(NotificationType.Error, Resource.Messages["OperationFailed"]);
             }
         }
@@ -127,7 +132,7 @@ namespace ManageMoneyServer.Controllers
                 return new JsonResponse(NotificationType.Success, Resource.Messages["OperationSuccessful"], result);
             } catch(Exception ex)
             {
-                // TODO: add logger
+                Logger.LogError(ex, $"Asset sync issue", new { source, type });
                 return new JsonResponse(NotificationType.Error, Resource.Messages["OperationFailed"]);
             }
         }
@@ -158,6 +163,7 @@ namespace ManageMoneyServer.Controllers
                 return new JsonResponse(NotificationType.Success, Resource.Messages["OperationSuccessful"], assets);
             } catch(Exception ex)
             {
+                Logger.LogError(ex, $"Failed to get asset list for {source}", new { source, skip, take });
                 return new JsonResponse(NotificationType.Error, Resource.Messages["OperationFailed"]);
             }
         }
@@ -166,12 +172,19 @@ namespace ManageMoneyServer.Controllers
         public async Task<IActionResult> Price([Required][StringLength(16, MinimumLength = 2)]string source,
             [Required][StringLength(5, MinimumLength = 1)]string symbol)
         {
-            if (Source.Contains(source))
+            try
             {
-                Tuple<string, decimal> price = await Source[source].GetAssetPrice(symbol);
+                Tuple<string, decimal> price = null;
+                if (Source.Contains(source))
+                {
+                    price = await Source[source].GetAssetPrice(symbol);
+                }
                 return new JsonResponse(NotificationType.Success, Resource.Messages["OperationSuccessful"], price?.Item2);
+            } catch(Exception ex)
+            {
+                Logger.LogError(ex, $"Failed to get price", new { source, symbol });
+                return new JsonResponse(NotificationType.Error, string.Format(Resource.Messages["FailedGetPrice"], symbol, source));
             }
-            return new JsonResponse(NotificationType.Error, string.Format(Resource.Messages["FailedGetPrice"], symbol, source));
         }
         [HttpGet]
         public async Task<IActionResult> Test()

@@ -26,25 +26,19 @@ namespace ManageMoneyServer.Api.Exchanges
 
         public async Task<IEnumerable<Asset>> GetAssets()
         {
-            try
-            {
-                JToken json = await Request.Get(Urls[1] + "asset/v2/public/asset/asset/get-all-asset");
-                string symbols = json["data"].ToString();
+            JToken json = await Request.Get(Urls[1] + "asset/v2/public/asset/asset/get-all-asset");
+            string symbols = json["data"].ToString();
 
-                if (!string.IsNullOrEmpty(symbols))
+            if (!string.IsNullOrEmpty(symbols))
+            {
+                List<BinanceAssetModel> binanceAssets = JsonConvert.DeserializeObject<List<BinanceAssetModel>>(symbols);
+                return binanceAssets.Where(a => !a.Delisted && !a.Etf && a.Trading).Select(a => new Asset
                 {
-                    List<BinanceAssetModel> binanceAssets = JsonConvert.DeserializeObject<List<BinanceAssetModel>>(symbols);
-                    return binanceAssets.Where(a => !a.Delisted && !a.Etf && a.Trading).Select(a => new Asset
-                    {
-                        Name = a.AssetName,
-                        Sumbol = a.AssetCode,
-                        Slug = a.AssetCode,
-                        Type = AssetTypes.Cryptocurrency
-                    });
-                }
-            } catch(Exception ex) 
-            { 
-                // TODO: Add logger
+                    Name = a.AssetName,
+                    Sumbol = a.AssetCode,
+                    Slug = a.AssetCode,
+                    Type = AssetTypes.Cryptocurrency
+                });
             }
 
             return null;
@@ -58,18 +52,14 @@ namespace ManageMoneyServer.Api.Exchanges
                 throw new ArgumentNullException($"Variable \"{nameof(symbol)}\" is null or empty");
 
             Tuple<string, decimal> result = null;
-            try
-            {
-                JObject json = (await Request.Get(Urls[0] + "api/v3/ticker/price", new Dictionary<string, object> { ["symbol"] = symbol + SymbolTo })) as JObject;
 
-                if (json.ContainsKey("symbol") && json.ContainsKey("price"))
-                {
-                    result = new Tuple<string, decimal>(json.Value<string>("symbol"), json.Value<decimal>("price"));
-                }
-            } catch(Exception ex)
+            JObject json = (await Request.Get(Urls[0] + "api/v3/ticker/price", new Dictionary<string, object> { ["symbol"] = symbol + SymbolTo })) as JObject;
+
+            if (json.ContainsKey("symbol") && json.ContainsKey("price"))
             {
-                // TODO: Add logger
+                result = new Tuple<string, decimal>(json.Value<string>("symbol"), json.Value<decimal>("price"));
             }
+
             return result;
         }
 
@@ -79,21 +69,16 @@ namespace ManageMoneyServer.Api.Exchanges
                 throw new ArgumentNullException($"Array \"{nameof(symbols)}\" is null or empty");
 
             Dictionary<string, decimal> result = new Dictionary<string, decimal>();
-            try
+            JArray json = (await Request.Get(Urls[0] + $"api/v3/ticker/price", new Dictionary<string, object> { ["symbols"] = JsonConvert.SerializeObject(symbols.Select(s => s.ToUpper() + SymbolTo)) })) as JArray;
+            
+            foreach (JObject item in json)
             {
-                JArray json = (await Request.Get(Urls[0] + $"api/v3/ticker/price", new Dictionary<string, object> { ["symbols"] = JsonConvert.SerializeObject(symbols.Select(s => s.ToUpper() + SymbolTo)) })) as JArray;
-                foreach(JObject item in json)
+                if (item.ContainsKey("symbol") && item.ContainsKey("price"))
                 {
-                    if (item.ContainsKey("symbol") && item.ContainsKey("price"))
-                    {
-                        result.Add(item.Value<string>("symbol"), item.Value<decimal>("price"));
-                    }
+                    result.Add(item.Value<string>("symbol"), item.Value<decimal>("price"));
                 }
             }
-            catch (Exception ex)
-            {
-                // TODO: Add logger
-            }
+
             return result;
         }
 
@@ -129,34 +114,28 @@ namespace ManageMoneyServer.Api.Exchanges
                 throw new ArgumentNullException($"Variable \"{nameof(symbol)}\" is null or empty");
 
             Dictionary<DateTime, decimal> result = new Dictionary<DateTime, decimal>();
-            try
+            Dictionary<string, object> @params = new Dictionary<string, object>
             {
-                Dictionary<string, object> @params = new Dictionary<string, object> 
-                { 
-                    ["symbol"] = symbol + SymbolTo,
-                    ["interval"] = "1d"
-                };
+                ["symbol"] = symbol + SymbolTo,
+                ["interval"] = "1d"
+            };
 
-                if(start.HasValue)
-                {
-                    @params.Add("startTime", DateTimeToUnixTime(start.Value));
-                }
-
-                if (start.HasValue)
-                {
-                    @params.Add("endTime", DateTimeToUnixTime(end.Value));
-                }
-
-                JArray json = (await Request.Get(Urls[0] + $"api/v3/klines", @params)) as JArray;
-                foreach (JArray item in json)
-                {
-                    result.Add(UnixTimeToDateTime(Convert.ToInt64(item.ToArray()[0])), Convert.ToDecimal(item.ToArray()[1]));
-                }
-            }
-            catch (Exception ex)
+            if (start.HasValue)
             {
-                // TODO: Add logger
+                @params.Add("startTime", DateTimeToUnixTime(start.Value));
             }
+
+            if (start.HasValue)
+            {
+                @params.Add("endTime", DateTimeToUnixTime(end.Value));
+            }
+
+            JArray json = (await Request.Get(Urls[0] + $"api/v3/klines", @params)) as JArray;
+            foreach (JArray item in json)
+            {
+                result.Add(UnixTimeToDateTime(Convert.ToInt64(item.ToArray()[0])), Convert.ToDecimal(item.ToArray()[1]));
+            }
+
             return result;
         }
         private long DateTimeToUnixTime(DateTime date)
