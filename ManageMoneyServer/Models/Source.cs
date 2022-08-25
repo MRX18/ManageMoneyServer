@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ManageMoneyServer.Models
 {
@@ -12,9 +11,5 @@ namespace ManageMoneyServer.Models
         public List<AssetType> AssetTypes { get; set; }
         [JsonIgnore]
         public List<Asset> Assets { get; set; }
-        public int? LanguageId { get; set; }
-        [JsonIgnore]
-        [ForeignKey("LanguageId")]
-        public Language Language { get; set; }
     }
 }

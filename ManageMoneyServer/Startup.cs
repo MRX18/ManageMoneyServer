@@ -55,10 +55,10 @@ namespace ManageMoneyServer
             });
 
             services.AddDbContext<ApplicationContext>(option => {
-                option.UseLoggerFactory(LoggerFactory.Create(builder => {
-                    builder.AddConsole();
-                    builder.AddDebug();
-                }));
+                //option.UseLoggerFactory(LoggerFactory.Create(builder => {
+                //    builder.AddConsole();
+                //    builder.AddDebug();
+                //}));
                 option.UseSqlServer(Configuration["ConnectionStrings:DefaultConnection"]);
             });
 
@@ -140,7 +140,7 @@ namespace ManageMoneyServer
                 endpoints.MapControllers();
             });
 
-            loggerFactory.AddFile($"{env.ContentRootPath}\\Logs\\log.txt");
+            //loggerFactory.AddFile($"{env.ContentRootPath}\\Logs\\log.txt");
         }
     }
 }

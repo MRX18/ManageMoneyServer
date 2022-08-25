@@ -36,7 +36,6 @@ namespace ManageMoneyServer.Api.Exchanges
                 {
                     Name = a.AssetName,
                     Sumbol = a.AssetCode,
-                    Slug = a.AssetCode,
                     Type = AssetTypes.Cryptocurrency
                 });
             }

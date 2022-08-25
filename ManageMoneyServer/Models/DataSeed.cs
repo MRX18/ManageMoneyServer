@@ -27,6 +27,9 @@ namespace ManageMoneyServer.Models
                 context.AssetTypes.RemoveRange(context.AssetTypes);
                 context.Database.ExecuteSqlInterpolated($"DBCC CHECKIDENT ('[ManageMoney].[dbo].[AssetTypes]', RESEED, 0);");
 
+                context.AssetTypeInfos.RemoveRange(context.AssetTypeInfos);
+                context.Database.ExecuteSqlInterpolated($"DBCC CHECKIDENT ('[ManageMoney].[dbo].[AssetTypeInfos]', RESEED, 0);");
+
                 context.Sources.RemoveRange(context.Sources);
                 context.Database.ExecuteSqlInterpolated($"DBCC CHECKIDENT ('[ManageMoney].[dbo].[Sources]', RESEED, 0);");
 
@@ -65,42 +68,58 @@ namespace ManageMoneyServer.Models
                 AssetType[] assetTypes = new AssetType[] {
                     new AssetType
                     {
-                        Language = languages[0],
-                        Name = "Cryptocurrency",
-                        Slug = "cryptocurrency",
                         Value = (int)AssetTypes.Cryptocurrency
                     },
                     new AssetType
                     {
-                        Language = languages[0],
-                        Name = "Fiat",
-                        Slug = "fiat",
                         Value = (int)AssetTypes.Fiat
                     },
                     new AssetType
                     {
-                        Language = languages[0],
-                        Name = "Stocks",
-                        Slug = "stocks",
                         Value = (int)AssetTypes.Stocks
                     }
                 };
                 context.AssetTypes.AddRange(assetTypes);
                 #endregion
 
+                #region Asset Type Info
+                AssetTypeInfo[] assetTypeInfos = new AssetTypeInfo[] 
+                { 
+                    new AssetTypeInfo
+                    {
+                        AssetType = assetTypes[0],
+                        Language = languages[0],
+                        Name = "Cryptocurrency"
+                    },
+                    new AssetTypeInfo
+                    {
+                        AssetType = assetTypes[1],
+                        Language = languages[0],
+                        Name = "Fiat",
+                    },
+                    new AssetTypeInfo
+                    {
+                        AssetType = assetTypes[2],
+                        Language = languages[0],
+                        Name = "Stocks",
+                    }
+                };
+                context.AssetTypeInfos.AddRange(assetTypeInfos);
+                #endregion
+
                 #region Source asset
                 List<Source> sources = new List<Source>();
                 foreach (ISource source in sourceService)
                 {
+                    AssetType assetType = assetTypes.First(a => source.Types.Contains(a.Type));
                     sources.Add(new Source
                     {
                         Name = source.SourceName,
                         Slug = source.Slug,
-                        AssetTypes = new List<AssetType> { assetTypes[0] },
-                        Language = languages[0]
+                        AssetTypes = new List<AssetType> { assetType },
                     });
                 }
-                context.AddRange(sources);
+                context.Sources.AddRange(sources);
                 #endregion
 
                 context.SaveChanges();

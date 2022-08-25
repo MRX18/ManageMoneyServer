@@ -9,14 +9,9 @@ namespace ManageMoneyServer.Models
     {
         public int AssetTypeId { get; set; }
         public int Value { get; set; }
-        public string Name { get; set; }
-        public string Slug { get; set; }
+        public List<AssetTypeInfo> Infos { get; set; }
         [JsonIgnore]
         public List<Source> Sources { get; set; }
-        public int? LanguageId { get; set; }
-        [JsonIgnore]
-        [ForeignKey("LanguageId")]
-        public Language Language { get; set; }
         [NotMapped]
         public AssetTypes Type => (AssetTypes)Value;
     }

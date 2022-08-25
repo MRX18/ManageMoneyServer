@@ -63,8 +63,7 @@ namespace ManageMoneyServer.Controllers
                         {
                             Name = source.SourceName,
                             Slug = source.Slug,
-                            AssetTypes = types,
-                            LanguageId = Context.DefaultLanguage.LanguageId
+                            AssetTypes = types
                         });
                         continue;
                     }

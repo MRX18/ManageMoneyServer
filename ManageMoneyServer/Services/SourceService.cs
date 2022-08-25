@@ -143,7 +143,6 @@ namespace ManageMoneyServer.Services
                     {
                         Asset sourceAsset = sourceAssets[i];
                         sourceAsset.Sources = new List<Source> { sourceInfo };
-                        sourceAsset.LanguageId = Context.DefaultLanguage.LanguageId;
                         sourceAsset.AssetTypeId = Context.AssetTypes.First(a => a.Type == sourceAsset.Type).AssetTypeId;
 
                         Asset asset = assets.FirstOrDefault(a => a.Sumbol.Equals(sourceAsset.Sumbol, StringComparison.OrdinalIgnoreCase));

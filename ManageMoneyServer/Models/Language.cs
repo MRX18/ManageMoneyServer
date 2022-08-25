@@ -9,10 +9,6 @@ namespace ManageMoneyServer.Models
         public string Name { get; set; }
         public string Symbol { get; set; }
         [JsonIgnore]
-        public List<Asset> Assets { get; set; }
-        [JsonIgnore]
-        public List<AssetType> AssetTypes { get; set; }
-        [JsonIgnore]
-        public List<Source> Sources { get; set; }
+        public List<AssetTypeInfo> AssetTypeInfos { get; set; }
     }
 }

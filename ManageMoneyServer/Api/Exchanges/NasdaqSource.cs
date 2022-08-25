@@ -65,7 +65,6 @@ namespace ManageMoneyServer.Api.Exchanges
             {
                 Name = a.Name,
                 Sumbol = a.Symbol,
-                Slug = a.Symbol,
                 Type = AssetTypes.Stocks
             });
         }
