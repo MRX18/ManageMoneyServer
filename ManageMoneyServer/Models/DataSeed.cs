@@ -22,6 +22,9 @@ namespace ManageMoneyServer.Models
                 UserManager<User> userManager = serviceProvider.GetRequiredService<UserManager<User>>();
 
                 #region Clear all tables
+                context.Portfolios.RemoveRange(context.Portfolios);
+                context.Database.ExecuteSqlInterpolated($"DBCC CHECKIDENT ('[ManageMoney].[dbo].[Portfolios]', RESEED, 0);");
+
                 context.Users.RemoveRange(context.Users);
 
                 context.AssetTypes.RemoveRange(context.AssetTypes);
@@ -40,12 +43,18 @@ namespace ManageMoneyServer.Models
                 #endregion
 
                 #region User
+                string email = "test@gmial.com";
                 var createUser = Task.Run(async () => await userManager.CreateAsync(new User
                 {
                     UserName = "Test",
-                    Email = "test@gmial.com"
+                    Email = email,
                 }, "Test1234."));
                 createUser.Wait();
+
+                var taskUser = Task.Run(async () => await userManager.FindByEmailAsync(email));
+                taskUser.Wait();
+
+                User user = taskUser.Result;
                 #endregion
 
                 #region Language
@@ -105,6 +114,26 @@ namespace ManageMoneyServer.Models
                     }
                 };
                 context.AssetTypes.AddRange(assetTypes);
+                #endregion
+
+                #region Portfolio
+                Portfolio[] portfolio = new Portfolio[] {
+                    new Portfolio
+                    {
+                        Name = "Portfolio crypto #1",
+                        Description = "Description crypto #1",
+                        AssetTypes = new List<AssetType> { assetTypes[0] },
+                        UserId = user.Id
+                    },
+                    new Portfolio
+                    {
+                        Name = "Portfolio stocks #2",
+                        Description = "Description stocks #2",
+                        AssetTypes = new List<AssetType> { assetTypes[2] },
+                        UserId = user.Id
+                    }
+                };
+                context.Portfolios.AddRange(portfolio);
                 #endregion
 
                 #region Source asset

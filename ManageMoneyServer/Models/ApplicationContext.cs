@@ -11,5 +11,7 @@ namespace ManageMoneyServer.Models
         public DbSet<AssetType> AssetTypes { get; set; }
         public DbSet<AssetTypeInfo> AssetTypeInfos { get; set; }
         public DbSet<Source> Sources { get; set; }
+        public DbSet<Portfolio> Portfolios { get; set; }
+        public DbSet<Transaction> Transactions { get; set; }
     }
 }

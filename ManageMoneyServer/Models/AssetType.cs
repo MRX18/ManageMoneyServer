@@ -12,7 +12,10 @@ namespace ManageMoneyServer.Models
         public List<AssetTypeInfo> Infos { get; set; }
         [JsonIgnore]
         public List<Source> Sources { get; set; }
+        public List<Portfolio> Portfolios { get; set; }
+        #region
         [NotMapped]
         public AssetTypes Type => (AssetTypes)Value;
+        #endregion
     }
 }
