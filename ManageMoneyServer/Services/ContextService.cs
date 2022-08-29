@@ -32,12 +32,15 @@ namespace ManageMoneyServer.Services
         }
         private async Task Init()
         {
-            IRequestCultureFeature rqf = HttpContext.HttpContext.Request.HttpContext.Features.Get<IRequestCultureFeature>();
+            IRequestCultureFeature rqf = HttpContext?.HttpContext?.Request?.HttpContext?.Features.Get<IRequestCultureFeature>();
 
-            currentLanguage = await LanguageRepository.FindAsync(l => l.Symbol == rqf.RequestCulture.Culture.Name.ToUpper());
-            defaultLanguage = await LanguageRepository.FindAsync(l => l.Symbol == DEFAULTLANGUAGESYMBOL);
+            if(rqf != null)
+            {
+                currentLanguage = await LanguageRepository.FindAsync(l => l.Symbol == rqf.RequestCulture.Culture.Name.ToUpper());
+                defaultLanguage = await LanguageRepository.FindAsync(l => l.Symbol == DEFAULTLANGUAGESYMBOL);
 
-            assetTypes = await AssetTypesRepository.GetListAsync();
+                assetTypes = await AssetTypesRepository.GetListAsync();
+            }
         }
     }
 }

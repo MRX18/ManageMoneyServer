@@ -64,47 +64,47 @@ namespace ManageMoneyServer.Models
                 context.Languages.AddRange(languages);
                 #endregion
 
-                #region Asset type
-                AssetType[] assetTypes = new AssetType[] {
-                    new AssetType
-                    {
-                        Value = (int)AssetTypes.Cryptocurrency
-                    },
-                    new AssetType
-                    {
-                        Value = (int)AssetTypes.Fiat
-                    },
-                    new AssetType
-                    {
-                        Value = (int)AssetTypes.Stocks
-                    }
-                };
-                context.AssetTypes.AddRange(assetTypes);
-                #endregion
-
                 #region Asset Type Info
-                AssetTypeInfo[] assetTypeInfos = new AssetTypeInfo[] 
-                { 
+                AssetTypeInfo[] assetTypeInfos = new AssetTypeInfo[]
+                {
                     new AssetTypeInfo
                     {
-                        AssetType = assetTypes[0],
                         Language = languages[0],
                         Name = "Cryptocurrency"
                     },
                     new AssetTypeInfo
                     {
-                        AssetType = assetTypes[1],
                         Language = languages[0],
                         Name = "Fiat",
                     },
                     new AssetTypeInfo
                     {
-                        AssetType = assetTypes[2],
                         Language = languages[0],
                         Name = "Stocks",
                     }
                 };
                 context.AssetTypeInfos.AddRange(assetTypeInfos);
+                #endregion
+
+                #region Asset type
+                AssetType[] assetTypes = new AssetType[] {
+                    new AssetType
+                    {
+                        Value = (int)AssetTypes.Cryptocurrency,
+                        Infos = new List<AssetTypeInfo> { assetTypeInfos[0] }
+                    },
+                    new AssetType
+                    {
+                        Value = (int)AssetTypes.Fiat,
+                        Infos = new List<AssetTypeInfo> { assetTypeInfos[1] }
+                    },
+                    new AssetType
+                    {
+                        Value = (int)AssetTypes.Stocks,
+                        Infos = new List<AssetTypeInfo> { assetTypeInfos[2] }
+                    }
+                };
+                context.AssetTypes.AddRange(assetTypes);
                 #endregion
 
                 #region Source asset

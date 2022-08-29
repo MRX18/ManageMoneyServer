@@ -1,3 +1,5 @@
 .vs/*
 ManageMoneyServer/bin/*
 ManageMoneyServer/obj/*
+ManageMoneyServer/Logs/*
+ManageMoneyServer/Migrations/*
