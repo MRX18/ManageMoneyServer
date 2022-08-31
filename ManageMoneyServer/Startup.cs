@@ -66,7 +66,10 @@ namespace ManageMoneyServer
             services.AddIdentity<User, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationContext>();
 
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme) 
+            services.AddAuthentication(auth => {
+                auth.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                auth.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }) 
                 .AddJwtBearer(option => {
                     option.RequireHttpsMetadata = false;
                     option.TokenValidationParameters = new TokenValidationParameters
