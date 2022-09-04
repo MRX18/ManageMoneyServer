@@ -76,5 +76,30 @@ namespace ManageMoneyServer.Controllers
                 return new JsonResponse(NotificationType.Error, Resource.Messages["OperationFailed"]);
             }
         }
+        [HttpPut]
+        public async Task<IActionResult> Index(PortfolioBase portfolio)
+        {
+            try
+            {
+                Portfolio currentPortfolio = await PortfolioRepository.FindByIdAsync(portfolio.PortfolioId, new Tuple<IncludeType, string>(IncludeType.Collection, "AssetTypes"));
+                
+                if(currentPortfolio != null)
+                {
+                    await PortfolioRepository.Attach(currentPortfolio);
+
+                    currentPortfolio.Name = portfolio.Name;
+                    currentPortfolio.Description = portfolio.Description;
+
+                    currentPortfolio = await PortfolioRepository.UpdateAsync(currentPortfolio);
+
+                    return new JsonResponse(NotificationType.Success, Resource.Messages["OperationSuccessful"], currentPortfolio);
+                }
+            } catch(Exception ex)
+            {
+                Logger.LogError(ex, "Failed to update portfolio", portfolio);
+            }
+
+            return new JsonResponse(NotificationType.Error, Resource.Messages["OperationFailed"]);
+        }
     }
 }

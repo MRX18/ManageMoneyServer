@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ManageMoneyServer.Models
 {
-    public class Portfolio
+    public class PortfolioBase
     {
         public int PortfolioId { get; set; }
         [Display(Name = "Name", ResourceType = typeof(Resources.Fields))]
@@ -16,6 +16,9 @@ namespace ManageMoneyServer.Models
         [Display(Name = "Description", ResourceType = typeof(Resources.Fields))]
         [StringLength(32, ErrorMessageResourceName = "StringLengthError", ErrorMessageResourceType = typeof(Resources.Messages))]
         public string Description { get; set; }
+    }
+    public class Portfolio : PortfolioBase
+    {
         // TODO: one asset type will be used for the first time
         [Display(Name = "AssetTypes", ResourceType = typeof(Resources.Fields))]
         [Required(ErrorMessageResourceName = "RequiredError", ErrorMessageResourceType = typeof(Resources.Messages))]
