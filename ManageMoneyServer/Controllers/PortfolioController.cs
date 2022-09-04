@@ -60,7 +60,20 @@ namespace ManageMoneyServer.Controllers
             } catch(Exception ex)
             {
                 Logger.LogError(ex, "Failed to create portfolio", portfolio);
-                return new JsonResponse(NotificationType.Success, Resource.Messages["OperationFailed"]);
+                return new JsonResponse(NotificationType.Error, Resource.Messages["OperationFailed"]);
+            }
+        }
+        [HttpDelete]
+        public async Task<IActionResult> Index(int portfolioId)
+        {
+            try
+            {
+                await PortfolioRepository.RemoveAsync(portfolioId);
+                return new JsonResponse(NotificationType.Success, Resource.Messages["OperationSuccessful"]);
+            } catch(Exception ex)
+            {
+                Logger.LogError(ex, "Failed to remove portfolio", portfolioId);
+                return new JsonResponse(NotificationType.Error, Resource.Messages["OperationFailed"]);
             }
         }
     }
