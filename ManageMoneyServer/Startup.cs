@@ -1,3 +1,4 @@
+using ManageMoneyServer.Filters;
 using ManageMoneyServer.Models;
 using ManageMoneyServer.Repositories;
 using ManageMoneyServer.Services;
@@ -39,11 +40,11 @@ namespace ManageMoneyServer
             //    o.Filters.Add(typeof(LocalizerActionFilter));
             //}).AddDataAnnotationsLocalization();
 
-            services.AddControllers()
-                .AddNewtonsoftJson(options => {
-                    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
-                })
-                .AddDataAnnotationsLocalization();
+            services.AddControllers(options => {
+                options.Filters.Add(typeof(ValidationActionFilter));
+            }).AddNewtonsoftJson(options => {
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+            }).AddDataAnnotationsLocalization();
 
             services.AddCors();
             services.AddResponseCaching();
