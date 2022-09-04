@@ -19,7 +19,6 @@ using System.Threading.Tasks;
 namespace ManageMoneyServer.Controllers
 {
     [Route("api/[controller]/[action]")]
-    [ValidationActionFilter]
     [ApiController]
     public class AuthController : ControllerBase
     {

@@ -61,6 +61,42 @@ namespace ManageMoneyServer.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The specified asset type could not be found.
+        /// </summary>
+        public static string AssetTypeNotFound {
+            get {
+                return ResourceManager.GetString("AssetTypeNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Collection length &quot;{0}&quot; must be {1}.
+        /// </summary>
+        public static string CollectionEqualsLengthError {
+            get {
+                return ResourceManager.GetString("CollectionEqualsLengthError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Collection length &quot;{0}&quot; must be less than {1} and greater than {2}.
+        /// </summary>
+        public static string CollectionLengthError {
+            get {
+                return ResourceManager.GetString("CollectionLengthError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Collection length &quot;{0}&quot; must be greater than {1}.
+        /// </summary>
+        public static string CollectionMinLengthError {
+            get {
+                return ResourceManager.GetString("CollectionMinLengthError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The &quot;{0}&quot; field does not match the &quot;{1}&quot; field.
         /// </summary>
         public static string CompareError {
