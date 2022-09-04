@@ -22,8 +22,8 @@ namespace ManageMoneyServer.Repositories
         public async Task<TEntity> CreateAsync(TEntity item)
         {
             EntityEntry entry = await Entity.AddAsync(item);
-            entry.State = EntityState.Detached;
             await SaveAsync();
+            entry.State = EntityState.Detached;
             return item;
         }
 
