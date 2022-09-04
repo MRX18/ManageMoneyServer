@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,9 +15,9 @@ using System.Threading.Tasks;
 namespace ManageMoneyServer.Controllers
 {
     [Authorize]
-    [Route("api/[controller]")]
+    [Route("api/[controller]/{action=Index}")]
     [ApiController]
-    public class PortfolioController : ControllerBase
+    public partial class PortfolioController : ControllerBase
     {
         private ILogger<PortfolioController> Logger { get; set; }
         private ResourceService Resource { get; set; }
@@ -37,6 +36,19 @@ namespace ManageMoneyServer.Controllers
             Context = context;
             PortfolioRepository = portfolioRepository;
             AssetTypeRepository = assetTypeRepository;
+        }
+        [HttpGet]
+        public async Task<IActionResult> Index()
+        {
+            try
+            {
+                return new JsonResponse(NotificationType.Success, Resource.Messages["OperationSuccessful"], 
+                    await PortfolioRepository.GetListAsync(p => p.UserId == Context.User.Id, p => p.AssetTypes));
+            } catch(Exception ex)
+            {
+                Logger.LogError(ex, "Failed to get portfolio");
+                return new JsonResponse(NotificationType.Error, Resource.Messages["OperationFailed"]);
+            }
         }
         [HttpPost]
         public async Task<IActionResult> Index(Portfolio portfolio)
