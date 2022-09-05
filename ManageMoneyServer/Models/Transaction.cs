@@ -12,6 +12,9 @@ namespace ManageMoneyServer.Models
         public int AssetId { get; set; }
         [ForeignKey("AssetId")]
         public Asset Asset { get; set; }
+        public int SourceId { get; set; }
+        [ForeignKey("SourceId")]
+        public Source Source { get; set; }
         public decimal Price { get; set; }
         public decimal Quantity { get; set; }
         public DateTime CreateAt { get; set; }
