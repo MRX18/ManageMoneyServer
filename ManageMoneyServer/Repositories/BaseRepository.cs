@@ -43,25 +43,32 @@ namespace ManageMoneyServer.Repositories
         public async Task<TEntity> FindByIdAsync(int id)
         {
             TEntity item = await Entity.FindAsync(id);
-            DbContext.Entry(item).State = EntityState.Detached;
+
+            if(item != null)
+                DbContext.Entry(item).State = EntityState.Detached;
+
             return item;
         }
 
         public async Task<TEntity> FindByIdAsync(int id, params Tuple<IncludeType, string>[] includes)
         {
             TEntity item = await Entity.FindAsync(id);
-            EntityEntry<TEntity> entry = DbContext.Entry(item);
             
-            foreach(Tuple<IncludeType, string> include in includes)
+            if(item != null)
             {
-                switch(include.Item1)
-                {
-                    case IncludeType.Collection: await entry.Collection(include.Item2).LoadAsync(); break;
-                    case IncludeType.Reference: await entry.Reference(include.Item2).LoadAsync(); break;
-                }
-            }
+                EntityEntry<TEntity> entry = DbContext.Entry(item);
 
-            entry.State = EntityState.Detached;
+                foreach (Tuple<IncludeType, string> include in includes)
+                {
+                    switch (include.Item1)
+                    {
+                        case IncludeType.Collection: await entry.Collection(include.Item2).LoadAsync(); break;
+                        case IncludeType.Reference: await entry.Reference(include.Item2).LoadAsync(); break;
+                    }
+                }
+
+                entry.State = EntityState.Detached;
+            }
 
             return item;
         }
