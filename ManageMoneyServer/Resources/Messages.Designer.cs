@@ -70,6 +70,15 @@ namespace ManageMoneyServer.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The asset type does not match the portfolio or asset source type.
+        /// </summary>
+        public static string AssetTypeNotMatchToPST {
+            get {
+                return ResourceManager.GetString("AssetTypeNotMatchToPST", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Collection length &quot;{0}&quot; must be {1}.
         /// </summary>
         public static string CollectionEqualsLengthError {
@@ -133,6 +142,15 @@ namespace ManageMoneyServer.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Incorrect portfolio specified.
+        /// </summary>
+        public static string IncorrectPortfolio {
+            get {
+                return ResourceManager.GetString("IncorrectPortfolio", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The number of characters in the field &quot;{0}&quot; must be less than {1}.
         /// </summary>
         public static string MaxLengthError {
@@ -169,11 +187,29 @@ namespace ManageMoneyServer.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The field &quot;{0}&quot; must be between {1} and {2}.
+        /// </summary>
+        public static string RangeError {
+            get {
+                return ResourceManager.GetString("RangeError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The &quot;{0}&quot; field is required.
         /// </summary>
         public static string RequiredError {
             get {
                 return ResourceManager.GetString("RequiredError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The selected &quot;{0}&quot; does not exist..
+        /// </summary>
+        public static string SelectedItemNotExist {
+            get {
+                return ResourceManager.GetString("SelectedItemNotExist", resourceCulture);
             }
         }
         

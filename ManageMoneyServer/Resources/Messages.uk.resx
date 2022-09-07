@@ -120,6 +120,9 @@
   <data name="AssetTypeNotFound" xml:space="preserve">
     <value>Не вдалося знайти вказаний тип активу</value>
   </data>
+  <data name="AssetTypeNotMatchToPST" xml:space="preserve">
+    <value>Тип активу не співпадає з типом портфеля або джерела активу</value>
+  </data>
   <data name="CollectionEqualsLengthError" xml:space="preserve">
     <value>Довжина колекції "{0}" має дорівнювати {1}</value>
   </data>
@@ -141,6 +144,9 @@
   <data name="FailedResource" xml:space="preserve">
     <value>Не вдалося отримати ресурс</value>
   </data>
+  <data name="IncorrectPortfolio" xml:space="preserve">
+    <value>Вказано некоректний портфель</value>
+  </data>
   <data name="MaxLengthError" xml:space="preserve">
     <value>Кількість символів в полі "{0}" повинно бути менше ніж {1}</value>
   </data>
@@ -153,8 +159,14 @@
   <data name="OperationSuccessful" xml:space="preserve">
     <value>Операція пройшла успішно</value>
   </data>
+  <data name="RangeError" xml:space="preserve">
+    <value>Поле "{0}" має бути від {1} до {2}</value>
+  </data>
   <data name="RequiredError" xml:space="preserve">
     <value>Поле "{0}" є обов'язковим</value>
+  </data>
+  <data name="SelectedItemNotExist" xml:space="preserve">
+    <value>Вибраний "{0}" не існує.</value>
   </data>
   <data name="StringLengthError" xml:space="preserve">
     <value>Довжина поля "{0}" має бути менше ніж {1} і більше ніж {2}</value>
