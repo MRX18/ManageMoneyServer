@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -47,20 +48,21 @@ namespace ManageMoneyServer.Controllers
         {
             try
             {
-                Portfolio portfolio = await PortfolioRepository.FindByIdAsync(transaction.PortfolioId, 
+                transaction.Portfolio = await PortfolioRepository.FindByIdAsync(transaction.PortfolioId, false,
                     new Tuple<IncludeType, string>(IncludeType.Collection, "AssetTypes"),
                     new Tuple<IncludeType, string>(IncludeType.Reference, "User"));
-                Source source = await SourceRepository.FindByIdAsync(transaction.SourceId, new Tuple<IncludeType, string>(IncludeType.Collection, "AssetTypes"));
-                Asset asset = await AssetRepository.FindByIdAsync(transaction.AssetId, new Tuple<IncludeType, string>(IncludeType.Reference, "AssetType"));
+                transaction.Source = await SourceRepository.FindByIdAsync(transaction.SourceId, false, new Tuple<IncludeType, string>(IncludeType.Collection, "AssetTypes"));
+                transaction.Asset = await AssetRepository.FindByIdAsync(transaction.AssetId, false, new Tuple<IncludeType, string>(IncludeType.Reference, "AssetType"));
 
-                if(!(portfolio.AssetTypes.Any(pt => pt.AssetTypeId == asset.AssetTypeId) && source.AssetTypes.Any(sa => sa.AssetTypeId == asset.AssetTypeId)))
-                    ModelState.AddModelError("AssetId", Resource.Messages["AssetTypeNotMatchToPST"]);
+                if (!transaction.IsValid(Context, out Dictionary<string, string> messages))
+                {
+                    foreach(KeyValuePair<string, string> message in messages)
+                    {
+                        ModelState.AddModelError(message.Key, Resource.Messages[message.Value]);
+                    }
 
-                if (portfolio.UserId != Context.User.Id)
-                    ModelState.AddModelError("PortfolioId", Resource.Messages["IncorrectPortfolio"]);
-
-                if (ModelState.ErrorCount != 0)
                     return BadRequest();
+                }
 
                 transaction.CreateAt = DateTime.Now;
                 return new JsonResponse(NotificationType.Success, Resource.Messages["OperationSuccessful"], await TransactionRepository.CreateAsync(transaction));

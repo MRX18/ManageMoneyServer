@@ -1,9 +1,12 @@
 ﻿using ManageMoneyServer.Repositories;
+using ManageMoneyServer.Services.Interfaces;
 using ManageMoneyServer.Validations;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 
 namespace ManageMoneyServer.Models
 {
@@ -35,5 +38,18 @@ namespace ManageMoneyServer.Models
         [Range(0, int.MaxValue, ErrorMessageResourceName = "RangeError", ErrorMessageResourceType = typeof(Resources.Messages))]
         public decimal Quantity { get; set; }
         public DateTime CreateAt { get; set; }
+
+        public bool IsValid(IContextService context, out Dictionary<string, string> messages)
+        {
+            messages = new Dictionary<string, string>();
+
+            if (!(Portfolio.AssetTypes.Any(pt => pt.AssetTypeId == Asset.AssetTypeId) && Source.AssetTypes.Any(sa => sa.AssetTypeId == Asset.AssetTypeId)))
+                messages.TryAdd("AssetId", "AssetTypeNotMatchToPST");
+
+            if (Portfolio.UserId != context.User.Id)
+                messages.TryAdd("PortfolioId", "IncorrectPortfolio");
+
+            return messages.Count == 0;
+        }
     }
 }
