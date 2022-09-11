@@ -135,9 +135,8 @@ namespace ManageMoneyServer.Services
                     List<Asset> assets2Update = new List<Asset>();
 
                     Source sourceInfo = await SourceRepository.FindAsync(s => s.Slug == source.Slug);
-                    await SourceRepository.Attach(sourceInfo);
 
-                    List<Asset> assets = await AssetRepository.GetListAsync(a => source.Types.Contains((AssetTypes)a.AssetType.Value), a => a.AssetType, a => a.Sources);
+                    List<Asset> assets = await AssetRepository.GetListAsync(a => source.Types.Contains((AssetTypes)a.AssetType.Value), false, a => a.AssetType, a => a.Sources);
 
                     for (int i = 0; i < sourceAssets.Count; i++)
                     {
@@ -164,7 +163,6 @@ namespace ManageMoneyServer.Services
                     if (assets2Update.Count > 0)
                     {
                         Asset[] assets2UpdateArray = assets2Update.ToArray();
-                        await AssetRepository.Attach(assets2UpdateArray);
                         await AssetRepository.UpdateAsync(assets2UpdateArray);
                     }
                     await AssetRepository.CreateAsync(sourceAssets.ToArray());

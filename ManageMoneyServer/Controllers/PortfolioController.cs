@@ -43,7 +43,7 @@ namespace ManageMoneyServer.Controllers
             try
             {
                 return new JsonResponse(NotificationType.Success, Resource.Messages["OperationSuccessful"], 
-                    await PortfolioRepository.GetListAsync(p => p.UserId == Context.User.Id, p => p.AssetTypes));
+                    await PortfolioRepository.GetListAsync(p => p.UserId == Context.User.Id, true, p => p.AssetTypes));
             } catch(Exception ex)
             {
                 Logger.LogError(ex, "Failed to get portfolio");
@@ -63,7 +63,6 @@ namespace ManageMoneyServer.Controllers
                     return BadRequest();
                 }
 
-                await AssetTypeRepository.Attach(assetTypes.ToArray());
                 portfolio.AssetTypes = assetTypes;
                 portfolio.UserId = Context.User.Id;
                 Portfolio createdPortfolio = await PortfolioRepository.CreateAsync(portfolio);
@@ -93,12 +92,10 @@ namespace ManageMoneyServer.Controllers
         {
             try
             {
-                Portfolio currentPortfolio = await PortfolioRepository.FindByIdAsync(portfolio.PortfolioId, new Tuple<IncludeType, string>(IncludeType.Collection, "AssetTypes"));
+                Portfolio currentPortfolio = await PortfolioRepository.FindByIdAsync(portfolio.PortfolioId, false, new Tuple<IncludeType, string>(IncludeType.Collection, "AssetTypes"));
                 
                 if(currentPortfolio != null)
                 {
-                    await PortfolioRepository.Attach(currentPortfolio);
-
                     currentPortfolio.Name = portfolio.Name;
                     currentPortfolio.Description = portfolio.Description;
 

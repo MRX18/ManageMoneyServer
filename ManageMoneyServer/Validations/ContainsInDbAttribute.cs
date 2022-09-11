@@ -20,9 +20,9 @@ namespace ManageMoneyServer.Validations
             {
                 var repository = validationContext.GetService(RepositoryType);
                 Type serviceType = repository.GetType();
-                MethodInfo method = serviceType.GetMethods().FirstOrDefault(m => m.Name == "FindByIdAsync" && m.GetParameters().Length == 1);
+                MethodInfo method = serviceType.GetMethods().FirstOrDefault(m => m.Name == "FindByIdAsync" && m.GetParameters().Length == 2);
 
-                Task task = method.Invoke(repository, new object[] { Convert.ToInt32(value) }) as Task;
+                Task task = method.Invoke(repository, new object[] { Convert.ToInt32(value), false }) as Task;
                 task.Wait();
 
                 PropertyInfo property = task.GetType().GetProperty("Result");

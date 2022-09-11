@@ -23,6 +23,13 @@ namespace ManageMoneyServer.Repositories
         {
             EntityEntry entry = await Entity.AddAsync(item);
             await SaveAsync();
+            return item;
+        }
+
+        public async Task<TEntity> CreateDetachedAsync(TEntity item)
+        {
+            EntityEntry entry = await Entity.AddAsync(item);
+            await SaveAsync();
             entry.State = EntityState.Detached;
             return item;
         }
@@ -31,8 +38,15 @@ namespace ManageMoneyServer.Repositories
         {
             await Entity.AddRangeAsync(items);
             await SaveAsync();
+            return items;
+        }
 
-            foreach(TEntity item in items)
+        public async Task<IEnumerable<TEntity>> CreateDetachedAsync(params TEntity[] items)
+        {
+            await Entity.AddRangeAsync(items);
+            await SaveAsync();
+
+            foreach (TEntity item in items)
             {
                 DbContext.Entry(item).State = EntityState.Detached;
             }
@@ -40,17 +54,17 @@ namespace ManageMoneyServer.Repositories
             return items;
         }
 
-        public async Task<TEntity> FindByIdAsync(int id)
+        public async Task<TEntity> FindByIdAsync(int id, bool detached = false)
         {
             TEntity item = await Entity.FindAsync(id);
 
-            if(item != null)
+            if(detached && item != null)
                 DbContext.Entry(item).State = EntityState.Detached;
 
             return item;
         }
 
-        public async Task<TEntity> FindByIdAsync(int id, params Tuple<IncludeType, string>[] includes)
+        public async Task<TEntity> FindByIdAsync(int id, bool detached = false, params Tuple<IncludeType, string>[] includes)
         {
             TEntity item = await Entity.FindAsync(id);
             
@@ -67,53 +81,81 @@ namespace ManageMoneyServer.Repositories
                     }
                 }
 
-                entry.State = EntityState.Detached;
+                if(detached && entry != null)
+                    entry.State = EntityState.Detached;
             }
 
             return item;
         }
 
-        public async Task<TEntity> FindAsync(Expression<Func<TEntity, bool>> predicate)
+        public async Task<TEntity> FindAsync(Expression<Func<TEntity, bool>> predicate, bool detached = false)
         {
-            return await Entity.AsNoTracking().FirstOrDefaultAsync(predicate);
+            IQueryable<TEntity> query = Entity;
+
+            if (detached)
+                query = query.AsNoTracking();
+
+            return await query.FirstOrDefaultAsync(predicate);
         }
 
-        public Task<TEntity> FindAsync(Expression<Func<TEntity, bool>> predicate, params Expression<Func<TEntity, object>>[] includes)
+        public Task<TEntity> FindAsync(Expression<Func<TEntity, bool>> predicate, bool detached = false, params Expression<Func<TEntity, object>>[] includes)
         {
-            IQueryable<TEntity> query = Entity.AsNoTracking();
+            IQueryable<TEntity> query = Entity;
+
+            if (detached)
+                query = query.AsNoTracking();
+
             return includes.Aggregate(query, (current, next) => current.Include(next)).FirstOrDefaultAsync(predicate);
         }
 
-        public Task<IQueryable<TEntity>> GetAsync()
+        public Task<IQueryable<TEntity>> GetAsync(bool detached = false)
         {
-            return Task.FromResult(Entity.AsNoTracking().AsQueryable());
+            IQueryable<TEntity> query = Entity;
+
+            if (detached)
+                query = query.AsNoTracking();
+
+            return Task.FromResult(query.AsQueryable());
         }
 
-        public async Task<List<TEntity>> GetListAsync() => await (await GetAsync()).ToListAsync();
+        public async Task<List<TEntity>> GetListAsync(bool detached = false) => await (await GetAsync(detached)).ToListAsync();
 
-        public Task<IQueryable<TEntity>> GetAsync(Expression<Func<TEntity, bool>> predicate)
+        public Task<IQueryable<TEntity>> GetAsync(Expression<Func<TEntity, bool>> predicate, bool detached = false)
         {
-            return Task.FromResult(Entity.AsNoTracking().Where(predicate).AsQueryable());
+            IQueryable<TEntity> query = Entity;
+
+            if (detached)
+                query = query.AsNoTracking();
+
+            return Task.FromResult(query.Where(predicate).AsQueryable());
         }
 
-        public async Task<List<TEntity>> GetListAsync(Expression<Func<TEntity, bool>> predicate) => await (await GetAsync(predicate)).ToListAsync();
+        public async Task<List<TEntity>> GetListAsync(Expression<Func<TEntity, bool>> predicate, bool detached = false) => await (await GetAsync(predicate, detached)).ToListAsync();
 
-        public Task<IQueryable<TEntity>> GetAsync(params Expression<Func<TEntity, object>>[] includes)
+        public Task<IQueryable<TEntity>> GetAsync(bool detached = false, params Expression<Func<TEntity, object>>[] includes)
         {
-            IQueryable<TEntity> query = Entity.AsNoTracking();
+            IQueryable<TEntity> query = Entity;
+
+            if (detached)
+                query = query.AsNoTracking();
+
             return Task.FromResult(includes.Aggregate(query, (current, next) => current.Include(next)));
         }
 
-        public async Task<List<TEntity>> GetListAsync(params Expression<Func<TEntity, object>>[] includes) => await (await GetAsync(includes)).ToListAsync();
+        public async Task<List<TEntity>> GetListAsync(bool detached = false, params Expression<Func<TEntity, object>>[] includes) => await (await GetAsync(detached, includes)).ToListAsync();
 
-        public Task<IQueryable<TEntity>> GetAsync(Expression<Func<TEntity, bool>> predicate, params Expression<Func<TEntity, object>>[] includes)
+        public Task<IQueryable<TEntity>> GetAsync(Expression<Func<TEntity, bool>> predicate, bool detached = false, params Expression<Func<TEntity, object>>[] includes)
         {
-            IQueryable<TEntity> query = Entity.AsNoTracking();
+            IQueryable<TEntity> query = Entity;
+
+            if (detached)
+                query = query.AsNoTracking();
+
             return Task.FromResult(includes.Aggregate(query, (current, next) => current.Include(next)).Where(predicate));
         }
 
-        public async Task<List<TEntity>> GetListAsync(Expression<Func<TEntity, bool>> predicate, params Expression<Func<TEntity, object>>[] includes)
-            => await (await GetAsync(predicate, includes)).ToListAsync();
+        public async Task<List<TEntity>> GetListAsync(Expression<Func<TEntity, bool>> predicate, bool detached = false, params Expression<Func<TEntity, object>>[] includes)
+            => await (await GetAsync(predicate, detached, includes)).ToListAsync();
 
         public async Task RemoveAsync(int id)
         {
@@ -145,11 +187,26 @@ namespace ManageMoneyServer.Repositories
             EntityEntry entry = Entity.Attach(item);
             Entity.Update(item);
             await SaveAsync();
+            return item;
+        }
+
+        public async Task<TEntity> UpdateDetachedAsync(TEntity item)
+        {
+            EntityEntry entry = Entity.Attach(item);
+            Entity.Update(item);
+            await SaveAsync();
             entry.State = EntityState.Detached;
             return item;
         }
 
         public async Task<IEnumerable<TEntity>> UpdateAsync(params TEntity[] items)
+        {
+            Entity.UpdateRange(items);
+            await SaveAsync();
+            return items;
+        }
+
+        public async Task<IEnumerable<TEntity>> UpdateDetachedAsync(params TEntity[] items)
         {
             Entity.UpdateRange(items);
             await SaveAsync();

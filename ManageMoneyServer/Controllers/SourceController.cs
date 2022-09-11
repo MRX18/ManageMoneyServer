@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace ManageMoneyServer.Controllers
 {
-    [Route("api/[controller]/[action]")]
+    [Route("api/[controller]/{action=Index}")]
     [ApiController]
     public class SourceController : ControllerBase
     {
@@ -56,8 +56,7 @@ namespace ManageMoneyServer.Controllers
                     Source current = sources.FirstOrDefault(s => s.Slug == source.Slug);
                     if (current == null)
                     {
-                        List<AssetType> types = await AssetTypeRepository.GetListAsync(at => source.Types.Contains(at.Type));
-                        await AssetTypeRepository.Attach(types.ToArray());
+                        List<AssetType> types = await AssetTypeRepository.GetListAsync(at => source.Types.Select(t => (int)t).Contains(at.Value));
 
                         sourcesToAdd.Add(new Source
                         {
@@ -70,7 +69,7 @@ namespace ManageMoneyServer.Controllers
                     sources.Remove(current);
                 }
 
-                await SourceRepository.CreateAsync(sourcesToAdd.ToArray());
+                await SourceRepository.CreateDetachedAsync(sourcesToAdd.ToArray());
                 await SourceRepository.RemoveAsync(sources.ToArray());
 
                 return new JsonResponse(NotificationType.Success, Resource.Messages["OperationSuccessful"], new SynchronizedViewModel<Source> 
@@ -91,7 +90,7 @@ namespace ManageMoneyServer.Controllers
             {
                 if (type.HasValue)
                     return new JsonResponse(NotificationType.Success, Resource.Messages["OperationSuccessful"],
-                        await SourceRepository.GetListAsync(s => s.AssetTypes.Any(t => t.Value == (int)type.Value)));
+                        await SourceRepository.GetListAsync(s => s.AssetTypes.Any(t => t.Value == (int)type.Value), true));
                 else
                     return new JsonResponse(NotificationType.Success, Resource.Messages["OperationSuccessful"], await SourceRepository.GetListAsync());
             }
@@ -139,12 +138,13 @@ namespace ManageMoneyServer.Controllers
         public async Task<IActionResult> Assets([Required][StringLength(16, MinimumLength = 2)]string source, 
             int? skip = null, int? take = null)
         {
+            // TODO: Add messages from resources for attributes
             try
             {
                 List<Asset> assets = new List<Asset>();
                 if (Source.Contains(source))
                 {
-                    IQueryable<Asset> query = await AssetRepository.GetAsync(a => a.Sources.Any(s => s.Slug == source), a => a.Sources);
+                    IQueryable<Asset> query = await AssetRepository.GetAsync(a => a.Sources.Any(s => s.Slug == source), true, a => a.Sources);
 
                     if (skip.HasValue)
                     {
