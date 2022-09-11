@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace ManageMoneyServer.Controllers
@@ -85,17 +86,12 @@ namespace ManageMoneyServer.Controllers
         {
             try
             {
-                Transaction currentTransaction = await TransactionRepository.FindByIdAsync(transaction.TransactionId, false, new Tuple<IncludeType, string>(IncludeType.Reference, "Portfolio"));
+                Transaction currentTransaction = await TransactionRepository.FindAsync(t => t.TransactionId == transaction.TransactionId &&
+                    t.Portfolio.UserId == Context.User.Id, false, t => t.Portfolio);
 
                 if (currentTransaction == null)
                 {
                     ModelState.AddModelError("TransactionId", string.Format(Resource.Messages["SelectedItemNotExist"], Resource.Fields["Transaction"]));
-                    return BadRequest();
-                }
-
-                if (!currentTransaction.CheckUser(Context, out Tuple<string, string> message))
-                {
-                    ModelState.AddModelError(message.Item1, message.Item2);
                     return BadRequest();
                 }
 
@@ -109,6 +105,59 @@ namespace ManageMoneyServer.Controllers
             catch (Exception ex)
             {
                 Logger.LogError(ex, "Failed to update transaction", transaction);
+            }
+
+            return new JsonResponse(NotificationType.Error, Resource.Messages["OperationFailed"]);
+        }
+        [HttpDelete("")]
+        public async Task<IActionResult> Delete(int transactionId)
+        {
+            try
+            {
+                if (!await TransactionRepository.HasAsync(t => t.TransactionId == transactionId && t.Portfolio.UserId == Context.User.Id, t => t.Portfolio))
+                {
+                    ModelState.AddModelError("TransactionId", string.Format(Resource.Messages["SelectedItemNotExist"], Resource.Fields["Transaction"]));
+                    return BadRequest();
+                }
+
+                await TransactionRepository.RemoveAsync(transactionId);
+                return new JsonResponse(NotificationType.Success, Resource.Messages["OperationSuccessful"]);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "Failed to remove transaction", transactionId);
+            }
+
+            return new JsonResponse(NotificationType.Error, Resource.Messages["OperationFailed"]);
+        }
+        [HttpGet("")]
+        public async Task<IActionResult> Get(int? portfolioId = null, int? assetId = null)
+        {
+            try
+            {
+                Expression<Func<Transaction, bool>> predicate = t => t.Portfolio.UserId == Context.User.Id;
+
+                if (portfolioId.HasValue)
+                {
+                    // TODO: add extension methods to add expressions
+                    Expression<Func<Transaction, bool>> subPredicate = t => t.PortfolioId == portfolioId.Value;
+                    InvocationExpression invokeExpr = Expression.Invoke(subPredicate, predicate.Parameters.Cast<Expression>());
+                    predicate = Expression.Lambda<Func<Transaction, bool>>(Expression.AndAlso(predicate.Body, invokeExpr), predicate.Parameters);
+                }
+
+                if (assetId.HasValue)
+                {
+                    Expression<Func<Transaction, bool>> subPredicate = t => t.AssetId == assetId.Value;
+                    InvocationExpression invokeExpr = Expression.Invoke(subPredicate, predicate.Parameters.Cast<Expression>());
+                    predicate = Expression.Lambda<Func<Transaction, bool>>(Expression.AndAlso(predicate.Body, invokeExpr), predicate.Parameters);
+                }
+
+                List<Transaction> transactions = await TransactionRepository.GetListAsync(predicate, true, t => t.Portfolio);
+
+                return new JsonResponse(NotificationType.Success, Resource.Messages["OperationSuccessful"], transactions);
+            } catch(Exception ex)
+            {
+                Logger.LogError(ex, "Failed to get transactions", portfolioId, assetId);
             }
 
             return new JsonResponse(NotificationType.Error, Resource.Messages["OperationFailed"]);
