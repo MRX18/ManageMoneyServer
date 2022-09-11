@@ -24,6 +24,11 @@ namespace ManageMoneyServer.Repositories
             return await Entity.AnyAsync(predicate);
         }
 
+        public async Task<bool> HasAsync(Expression<Func<TEntity, bool>> predicate, params Expression<Func<TEntity, object>>[] includes)
+        {
+            return await includes.Aggregate(Entity as IQueryable<TEntity>, (current, next) => current.Include(next)).AnyAsync(predicate);
+        }
+
         public async Task<TEntity> CreateAsync(TEntity item)
         {
             EntityEntry entry = await Entity.AddAsync(item);

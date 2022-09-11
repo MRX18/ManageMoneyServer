@@ -15,6 +15,7 @@ namespace ManageMoneyServer.Repositories
     public interface IRepository<TEntity> : IAsyncDisposable where TEntity : class
     {
         Task<bool> HasAsync(Expression<Func<TEntity, bool>> predicate);
+        Task<bool> HasAsync(Expression<Func<TEntity, bool>> predicate, params Expression<Func<TEntity, object>>[] includes);
         Task<TEntity> CreateAsync(TEntity item);
         Task<TEntity> CreateDetachedAsync(TEntity item);
         Task<IEnumerable<TEntity>> CreateAsync(params TEntity[] items);
