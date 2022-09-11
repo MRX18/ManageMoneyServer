@@ -19,6 +19,11 @@ namespace ManageMoneyServer.Repositories
             Entity = DbContext.Set<TEntity>();
         }
 
+        public async Task<bool> HasAsync(Expression<Func<TEntity, bool>> predicate)
+        {
+            return await Entity.AnyAsync(predicate);
+        }
+
         public async Task<TEntity> CreateAsync(TEntity item)
         {
             EntityEntry entry = await Entity.AddAsync(item);

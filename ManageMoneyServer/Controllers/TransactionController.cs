@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 namespace ManageMoneyServer.Controllers
 {
     [Authorize]
-    [Route("api/[controller]/{Action=Index}")]
+    [Route("api/[controller]")]
     [ApiController]
     public class TransactionController : ControllerBase
     {
@@ -43,32 +43,72 @@ namespace ManageMoneyServer.Controllers
             SourceRepository = sourceRepository;
             AssetRepository = assetRepository;
         }
-        [HttpPost]
-        public async Task<IActionResult> Index(Transaction transaction)
+        private async Task<bool> CheckTransaction(Transaction transaction)
+        {
+            transaction.Portfolio = await PortfolioRepository.FindByIdAsync(transaction.PortfolioId, false,
+                    new Tuple<IncludeType, string>(IncludeType.Collection, "AssetTypes"),
+                    new Tuple<IncludeType, string>(IncludeType.Reference, "User"));
+            transaction.Source = await SourceRepository.FindByIdAsync(transaction.SourceId, false, new Tuple<IncludeType, string>(IncludeType.Collection, "AssetTypes"));
+            transaction.Asset = await AssetRepository.FindByIdAsync(transaction.AssetId, false, new Tuple<IncludeType, string>(IncludeType.Reference, "AssetType"));
+
+            bool result = transaction.IsValid(Context, out Dictionary<string, string> messages);
+            
+            foreach (KeyValuePair<string, string> message in messages)
+            {
+                ModelState.AddModelError(message.Key, Resource.Messages[message.Value]);
+            }
+
+            return result;
+        }
+        [HttpPost("")]
+        public async Task<IActionResult> Create(Transaction transaction)
         {
             try
             {
-                transaction.Portfolio = await PortfolioRepository.FindByIdAsync(transaction.PortfolioId, false,
-                    new Tuple<IncludeType, string>(IncludeType.Collection, "AssetTypes"),
-                    new Tuple<IncludeType, string>(IncludeType.Reference, "User"));
-                transaction.Source = await SourceRepository.FindByIdAsync(transaction.SourceId, false, new Tuple<IncludeType, string>(IncludeType.Collection, "AssetTypes"));
-                transaction.Asset = await AssetRepository.FindByIdAsync(transaction.AssetId, false, new Tuple<IncludeType, string>(IncludeType.Reference, "AssetType"));
-
-                if (!transaction.IsValid(Context, out Dictionary<string, string> messages))
+                if (!await CheckTransaction(transaction))
                 {
-                    foreach(KeyValuePair<string, string> message in messages)
-                    {
-                        ModelState.AddModelError(message.Key, Resource.Messages[message.Value]);
-                    }
-
                     return BadRequest();
                 }
 
                 transaction.CreateAt = DateTime.Now;
-                return new JsonResponse(NotificationType.Success, Resource.Messages["OperationSuccessful"], await TransactionRepository.CreateAsync(transaction));
+                transaction.UpdateAt = DateTime.Now;
+                return new JsonResponse(NotificationType.Success, Resource.Messages["OperationSuccessful"], await TransactionRepository.CreateDetachedAsync(transaction));
             } catch(Exception ex)
             {
                 Logger.LogError(ex, "Failed to create transaction", transaction);
+            }
+
+            return new JsonResponse(NotificationType.Error, Resource.Messages["OperationFailed"]);
+        }
+        [HttpPut("")]
+        public async Task<IActionResult> Update(TransactionBase transaction)
+        {
+            try
+            {
+                Transaction currentTransaction = await TransactionRepository.FindByIdAsync(transaction.TransactionId, false, new Tuple<IncludeType, string>(IncludeType.Reference, "Portfolio"));
+
+                if (currentTransaction == null)
+                {
+                    ModelState.AddModelError("TransactionId", string.Format(Resource.Messages["SelectedItemNotExist"], Resource.Fields["Transaction"]));
+                    return BadRequest();
+                }
+
+                if (!currentTransaction.CheckUser(Context, out Tuple<string, string> message))
+                {
+                    ModelState.AddModelError(message.Item1, message.Item2);
+                    return BadRequest();
+                }
+
+                currentTransaction.Price = transaction.Price;
+                currentTransaction.Quantity = transaction.Quantity;
+                currentTransaction.IsPurchase = transaction.IsPurchase;
+                currentTransaction.UpdateAt = DateTime.Now;
+
+                return new JsonResponse(NotificationType.Success, Resource.Messages["OperationSuccessful"], await TransactionRepository.UpdateDetachedAsync(currentTransaction));
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "Failed to update transaction", transaction);
             }
 
             return new JsonResponse(NotificationType.Error, Resource.Messages["OperationFailed"]);

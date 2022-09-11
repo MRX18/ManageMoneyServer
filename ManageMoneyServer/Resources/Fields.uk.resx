@@ -153,4 +153,7 @@
   <data name="Source" xml:space="preserve">
     <value>Джерело</value>
   </data>
+  <data name="Transaction" xml:space="preserve">
+    <value>Транзакція</value>
+  </data>
 </root>

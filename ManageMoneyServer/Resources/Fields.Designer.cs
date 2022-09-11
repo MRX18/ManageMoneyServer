@@ -167,5 +167,14 @@ namespace ManageMoneyServer.Resources {
                 return ResourceManager.GetString("Source", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Transaction.
+        /// </summary>
+        public static string Transaction {
+            get {
+                return ResourceManager.GetString("Transaction", resourceCulture);
+            }
+        }
     }
 }
