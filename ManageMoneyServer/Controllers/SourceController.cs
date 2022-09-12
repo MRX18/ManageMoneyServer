@@ -135,10 +135,13 @@ namespace ManageMoneyServer.Controllers
             }
         }
         [HttpGet]
-        public async Task<IActionResult> Assets([Required][StringLength(16, MinimumLength = 2)]string source, 
+        public async Task<IActionResult> Assets(
+            [Display(Name = "Source", ResourceType = typeof(Resources.Fields))]
+            [Required(ErrorMessageResourceName = "RequiredError", ErrorMessageResourceType = typeof(Resources.Messages))]
+            [StringLength(16, MinimumLength = 2, ErrorMessageResourceName = "StringLengthError", ErrorMessageResourceType = typeof(Resources.Messages))]
+            string source, 
             int? skip = null, int? take = null)
         {
-            // TODO: Add messages from resources for attributes
             try
             {
                 List<Asset> assets = new List<Asset>();
