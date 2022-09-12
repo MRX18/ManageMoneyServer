@@ -1,4 +1,5 @@
-﻿using ManageMoneyServer.Models;
+﻿using ManageMoneyServer.Extensions;
+using ManageMoneyServer.Models;
 using ManageMoneyServer.Models.ViewModels;
 using ManageMoneyServer.Repositories;
 using ManageMoneyServer.Results;
@@ -139,17 +140,14 @@ namespace ManageMoneyServer.Controllers
 
                 if (portfolioId.HasValue)
                 {
-                    // TODO: add extension methods to add expressions
                     Expression<Func<Transaction, bool>> subPredicate = t => t.PortfolioId == portfolioId.Value;
-                    InvocationExpression invokeExpr = Expression.Invoke(subPredicate, predicate.Parameters.Cast<Expression>());
-                    predicate = Expression.Lambda<Func<Transaction, bool>>(Expression.AndAlso(predicate.Body, invokeExpr), predicate.Parameters);
+                    predicate = predicate.And(subPredicate);
                 }
 
                 if (assetId.HasValue)
                 {
                     Expression<Func<Transaction, bool>> subPredicate = t => t.AssetId == assetId.Value;
-                    InvocationExpression invokeExpr = Expression.Invoke(subPredicate, predicate.Parameters.Cast<Expression>());
-                    predicate = Expression.Lambda<Func<Transaction, bool>>(Expression.AndAlso(predicate.Body, invokeExpr), predicate.Parameters);
+                    predicate = predicate.And(subPredicate);
                 }
 
                 List<Transaction> transactions = await TransactionRepository.GetListAsync(predicate, true, t => t.Portfolio);
