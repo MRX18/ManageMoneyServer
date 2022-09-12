@@ -79,6 +79,12 @@ namespace ManageMoneyServer.Controllers
         {
             try
             {
+                if (!await PortfolioRepository.HasAsync(p => p.PortfolioId == portfolioId && p.UserId == Context.User.Id))
+                {
+                    ModelState.AddModelError("PortfolioId", string.Format(Resource.Messages["SelectedItemNotExist"], Resource.Fields["Portfolio"]));
+                    return BadRequest();
+                }
+
                 await PortfolioRepository.RemoveAsync(portfolioId);
                 return new JsonResponse(NotificationType.Success, Resource.Messages["OperationSuccessful"]);
             } catch(Exception ex)
@@ -92,17 +98,20 @@ namespace ManageMoneyServer.Controllers
         {
             try
             {
-                Portfolio currentPortfolio = await PortfolioRepository.FindByIdAsync(portfolio.PortfolioId, false, new Tuple<IncludeType, string>(IncludeType.Collection, "AssetTypes"));
-                
-                if(currentPortfolio != null)
+                Portfolio currentPortfolio = await PortfolioRepository.FindAsync(p => p.PortfolioId == portfolio.PortfolioId && p.UserId == Context.User.Id, false, p => p.AssetTypes);
+
+                if (currentPortfolio == null)
                 {
-                    currentPortfolio.Name = portfolio.Name;
-                    currentPortfolio.Description = portfolio.Description;
-
-                    currentPortfolio = await PortfolioRepository.UpdateAsync(currentPortfolio);
-
-                    return new JsonResponse(NotificationType.Success, Resource.Messages["OperationSuccessful"], currentPortfolio);
+                    ModelState.AddModelError("PortfolioId", string.Format(Resource.Messages["SelectedItemNotExist"], Resource.Fields["Portfolio"]));
+                    return BadRequest();
                 }
+
+                currentPortfolio.Name = portfolio.Name;
+                currentPortfolio.Description = portfolio.Description;
+
+                currentPortfolio = await PortfolioRepository.UpdateAsync(currentPortfolio);
+
+                return new JsonResponse(NotificationType.Success, Resource.Messages["OperationSuccessful"], currentPortfolio);
             } catch(Exception ex)
             {
                 Logger.LogError(ex, "Failed to update portfolio", portfolio);
